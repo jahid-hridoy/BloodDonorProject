@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" id="donorForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FullName" class="control-label"></label>
@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
+                <input asp-for="DateOfBirth" class="form-control" type="date"/>
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,14 +34,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="BloodGroup" class="control-label"></label>
-                <select asp-for="BloodGroup" class="form-control"></select>
+                <select asp-for="BloodGroup" class="form-control"
+                        asp-items="ViewBag.BloodGroupList">
+                    <option value="">-- Select Blood Group --</option>
+                </select>
                 <span asp-validation-for="BloodGroup" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Weight" class="control-label"></label>
-                <input asp-for="Weight" class="form-control" />
+                <label asp-for="Weight" class="control-label"></label> 
+                <input asp-for="Weight" class="form-control" id="Weight" type="number" min="50" max="100" step="1"/>
                 <span asp-validation-for="Weight" class="text-danger"></span>
+                <span class="text-danger" id="weightError" style="display:none;"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
                 <input asp-for="Address" class="form-control" />
@@ -49,7 +54,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="LastDonationDate" class="control-label"></label>
-                <input asp-for="LastDonationDate" class="form-control" />
+                <input asp-for="LastDonationDate" class="form-control" type="date"/>
                 <span asp-validation-for="LastDonationDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -62,4 +67,53 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const weightInput = document.getElementById('Weight');
+        const weightError = document.getElementById('weightError');
+        const form = document.getElementById('donorForm');
+
+        if (!weightInput || !form) {
+            console.warn("Weight input or form not found.");
+            return;
+        }
+
+        function validateWeight() {
+            const weightValue = weightInput.value.trim();
+
+            // Check if it's a valid number
+            if (!/^\d+(\.\d+)?$/.test(weightValue)) {
+                weightError.textContent = "Weight must be a valid number.";
+                weightError.style.display = 'block';
+                return false;
+            }
+
+            const weight = parseFloat(weightValue);
+
+            // Check if it's in the range 50–100
+            if (weight < 50 || weight > 100) {
+                weightError.textContent = "Weight must be between 50 and 100.";
+                weightError.style.display = 'block';
+                return false;
+            }
+
+            // Valid input
+            weightError.style.display = 'none';
+            return true;
+        }
+
+        weightInput.addEventListener('input', validateWeight);
+
+        form.addEventListener('submit', function (e) {
+            if (!validateWeight()) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+
+
+
 

@@ -52,7 +52,7 @@ namespace BloodDonorProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastDonationDate")
+                    b.Property<DateTime?>("LastDonationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ProfilePicture")
