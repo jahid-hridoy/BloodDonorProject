@@ -1,19 +1,56 @@
-@page
-@model BloodDonorProject.Views.BloodDonor.Index
+@model IEnumerable<BloodDonorProject.Models.BloodDonor>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Index";
 }
 
-<!DOCTYPE html>
+<h1>Blood Donor List</h1>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    <h1>Blood Donor Index Page</h1>
-</div>
-</body>
-</html>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
+        <th>@Html.DisplayNameFor(m => m.First().ContactNumber)</th>
+        <th>@Html.DisplayNameFor(m => m.First().DateOfBirth)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Email)</th>
+        <th>@Html.DisplayNameFor(m => m.First().BloodGroup)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Weight)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Address)</th>
+        <th>@Html.DisplayNameFor(m => m.First().LastDonationDate)</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FullName</td>
+                <td>@item.ContactNumber</td>
+                <td>@item.DateOfBirth.ToShortDateString()</td>
+                <td>@item.Email</td>
+                <td>@item.BloodGroup</td>
+                <td>@item.Weight</td>
+                <td>@item.Address</td>
+                <td>@(item.LastDonationDate.ToShortDateString() ?? "N/A")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="9">No donors found.</td>
+        </tr>
+    }
+    </tbody>
+</table>
