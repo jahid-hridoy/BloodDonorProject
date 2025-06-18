@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using BloodDonorProject.Models;
+
 namespace BloodDonorProject.Controllers;
 
 public class BloodDonorController : Controller
@@ -8,4 +10,16 @@ public class BloodDonorController : Controller
     {
         return View();
     }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    public IActionResult Create(BloodDonor donor)
+    {
+        return RedirectToAction("Index");
+    }
+
 }

@@ -1,19 +1,78 @@
 @page
-@model BloodDonorProject.Views.BloodDonor.Index
+@model BloodDonorProject.Views.BloodDonor.IndexModel
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Index";
 }
 
-<!DOCTYPE html>
+<h1>Index</h1>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    <h1>Blood Donor Index Page</h1>
-</div>
-</body>
-</html>
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].ContactNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].BloodGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].Weight)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodDonor[0].LastDonationDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.BloodDonor) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContactNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BloodGroup)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Weight)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastDonationDate)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
