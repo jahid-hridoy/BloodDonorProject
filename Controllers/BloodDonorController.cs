@@ -33,7 +33,8 @@ public class BloodDonorController : Controller
     }
     public IActionResult Index()
     {
-        return View();
+        var donors = _context.BloodDonors.ToList();
+        return View(donors);
     }
 
     public IActionResult Create()
@@ -43,7 +44,7 @@ public class BloodDonorController : Controller
     }
     
     [HttpPost]
-    public IActionResult Create(BloodDonorCreateViewModel donor)
+    public async Task<IActionResult> Create(BloodDonorCreateViewModel donor)
     {
         if (!ModelState.IsValid)
             return View(donor);
@@ -70,9 +71,9 @@ public class BloodDonorController : Controller
             var fullPath = Path.Combine(filePath, fileName);
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
-                donor.ProfilePicture.CopyTo(stream);
-                newDonor.ProfilePicture = fullPath;
+                await donor.ProfilePicture.CopyToAsync(stream);
             }
+            newDonor.ProfilePicture = Path.Combine("ProfilePictures", fileName);
         }    
         _context.BloodDonors.Add(newDonor);
         _context.SaveChanges();

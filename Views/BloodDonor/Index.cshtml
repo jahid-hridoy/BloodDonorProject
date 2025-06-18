@@ -1,3 +1,4 @@
+@using Microsoft.Build.Construction
 @model IEnumerable<BloodDonorProject.Models.BloodDonor>
 
 @{
@@ -27,17 +28,18 @@
     <tbody>
     @if (Model != null && Model.Any())
     {
+        //string profilePicturePath = null;
         foreach (var item in Model)
-        {
+        {  
             <tr>
                 <td>@item.FullName</td>
                 <td>@item.ContactNumber</td>
                 <td>@item.DateOfBirth.ToShortDateString()</td>
                 <td>@item.Email</td>
-                <td>@item.BloodGroup</td>
+                <td>@item.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")</td>
                 <td>@item.Weight</td>
                 <td>@item.Address</td>
-                <td>@item.LastDonationDate?.ToShortDateString() ?? ""</td>
+                <td>@(item.LastDonationDate.HasValue ? item.LastDonationDate.Value.ToShortDateString() : "N/A")</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
