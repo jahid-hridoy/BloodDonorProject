@@ -8,7 +8,7 @@
 <h1>Blood Donor List</h1>
 
 <form method="get" class="row g-2 mb-3">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <select name="bloodGroup" class="form-select">
             <option value="">All Blood Groups</option>
             @foreach (var bg in Enum.GetNames(typeof(BloodGroup)))
@@ -17,10 +17,17 @@
             }
         </select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <input type="text" name="address" class="form-control" placeholder="Search by address" />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <select name="eligible" class="form-select">
+            <option value="">All Donors</option>
+            <option value="true">Eligible</option>
+            <option value="false">Not Eligible</option>
+        </select>
+    </div>
+    <div class="col-md-3">
         <button type="submit" class="btn btn-primary w-100">Search</button>
     </div>
 </form>

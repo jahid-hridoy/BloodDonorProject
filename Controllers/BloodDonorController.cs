@@ -31,7 +31,7 @@ public class BloodDonorController : Controller
         _context = context;
         _env = env;
     }
-    public IActionResult Index(string bloodGroup, string address)
+    public IActionResult Index(string bloodGroup, string address, bool? eligible)
     {
         IQueryable<BloodDonor> query = _context.BloodDonors;
         if (!string.IsNullOrEmpty(bloodGroup))
@@ -57,6 +57,10 @@ public class BloodDonorController : Controller
             IsEligibleForDonation = (d.Weight >= 50 && d.Weight <= 150) && (d.LastDonationDate == null || (DateTime.Now - d.LastDonationDate.Value).TotalDays >= 90)
         }).ToList();
         // var donors = query.ToList();
+        if (eligible.HasValue)
+        {
+            donors = donors.Where(d => d.IsEligibleForDonation == eligible).ToList();
+        }
         return View(donors);
     }
 
@@ -67,7 +71,7 @@ public class BloodDonorController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create(BloodDonorCreateViewModel donor)
+    public async Task<IActionResult> CreateAsync(BloodDonorCreateViewModel donor)
     {
         if (!ModelState.IsValid)
             return View(donor);
@@ -103,4 +107,125 @@ public class BloodDonorController : Controller
         return RedirectToAction("Index");
     }
 
+    public IActionResult Details(int id)
+    {
+        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        if (donor == null)
+        {
+            return NotFound();
+        }
+        var viewModel = new BloodDonorListViewModel
+        {
+            Id = donor.Id,
+            FullName = donor.FullName,
+            ContactNumber = donor.ContactNumber,
+            Age = DateTime.Now.Year - donor.DateOfBirth.Year,
+            Email = donor.Email,
+            BloodGroup = donor.BloodGroup.ToString(),
+            Address = donor.Address,
+            ProfilePicture = donor.ProfilePicture,
+            LastDonationDate = donor.LastDonationDate.HasValue ? $"{(DateTime.Today - donor.LastDonationDate.Value).Days} days ago" : "Never",
+            IsEligibleForDonation = (donor.Weight >= 50 && donor.Weight <= 150) && (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90)
+        };
+        return View(viewModel);
+    }
+    
+    public IActionResult Edit(int id)
+    {
+        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        if (donor == null)
+        {
+            return NotFound();
+        }
+        var viewModel = new BloodDonorEditViewModel
+        {
+            Id = donor.Id,
+            FullName = donor.FullName,
+            ContactNumber = donor.ContactNumber,
+            DateOfBirth = donor.DateOfBirth,
+            Email = donor.Email,
+            BloodGroup = donor.BloodGroup,
+            Address = donor.Address,
+            Weight = donor.Weight,
+            LastDonationDate = donor.LastDonationDate,
+            ExistingProfilePicture = donor.ProfilePicture
+        };
+        return View(viewModel);
+    }
+    
+    [HttpPost]
+    [HttpPut]
+    public async Task<IActionResult> EditAsync(BloodDonorEditViewModel donor)
+    {
+        if (!ModelState.IsValid)
+            return View(donor);
+        var newDonor = new BloodDonor
+        {
+            FullName = donor.FullName,
+            ContactNumber = donor.ContactNumber,
+            DateOfBirth = donor.DateOfBirth,
+            Email = donor.Email,
+            BloodGroup = donor.BloodGroup,
+            Address = donor.Address,
+            Weight = donor.Weight,
+            LastDonationDate = donor.LastDonationDate
+        };
+        if (donor.ProfilePicture != null && donor.ProfilePicture.Length > 0)
+        {   
+            Console.WriteLine(Path.GetExtension(donor.ProfilePicture.FileName));
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(donor.ProfilePicture.FileName)}";
+            var filePath = Path.Combine(_env.WebRootPath, "ProfilePictures");
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            var fullPath = Path.Combine(filePath, fileName);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await donor.ProfilePicture.CopyToAsync(stream);
+            }
+            newDonor.ProfilePicture = Path.Combine("ProfilePictures", fileName);
+        }    
+        _context.BloodDonors.Add(newDonor);
+        _context.SaveChanges();
+        return RedirectToAction("Index");
+    }
+    
+    public IActionResult Delete(int id)
+    {
+        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        if (donor == null)
+        {
+            return NotFound();
+        }
+        var viewModel = new BloodDonorListViewModel
+        {
+            Id = donor.Id,
+            FullName = donor.FullName,
+            ContactNumber = donor.ContactNumber,
+            Age = DateTime.Now.Year - donor.DateOfBirth.Year,
+            Email = donor.Email,
+            BloodGroup = donor.BloodGroup.ToString(),
+            Address = donor.Address,
+            ProfilePicture = donor.ProfilePicture,
+            LastDonationDate = donor.LastDonationDate.HasValue ? $"{(DateTime.Today - donor.LastDonationDate.Value).Days} days ago" : "Never",
+            IsEligibleForDonation = (donor.Weight >= 50 && donor.Weight <= 150) && (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90)
+        };
+        return View(viewModel);
+    }
+    
+    [ActionName("DeleteConfirmed")]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        if (donor == null)
+        {
+            return NotFound();
+        }
+        _context.BloodDonors.Remove(donor);
+        _context.SaveChanges();
+        return RedirectToAction("Index");
+    }
+
 }
+
