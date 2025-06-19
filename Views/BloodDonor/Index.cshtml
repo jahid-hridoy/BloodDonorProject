@@ -1,8 +1,8 @@
 @using Microsoft.Build.Construction
-@model IEnumerable<BloodDonorProject.Models.BloodDonor>
+@model List<BloodDonorListViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Blood Donor List";
 }
 
 <h1>Blood Donor List</h1>
@@ -34,12 +34,12 @@
     <tr>
         <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
         <th>@Html.DisplayNameFor(m => m.First().ContactNumber)</th>
-        <th>@Html.DisplayNameFor(m => m.First().DateOfBirth)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Age)</th>
         <th>@Html.DisplayNameFor(m => m.First().Email)</th>
         <th>@Html.DisplayNameFor(m => m.First().BloodGroup)</th>
-        <th>@Html.DisplayNameFor(m => m.First().Weight)</th>
         <th>@Html.DisplayNameFor(m => m.First().Address)</th>
         <th>@Html.DisplayNameFor(m => m.First().LastDonationDate)</th>
+        <th>Eligibility</th>
         <th>@Html.DisplayNameFor(m => m.First().ProfilePicture)</th>
         <th>Actions</th>
     </tr>
@@ -53,12 +53,22 @@
             <tr>
                 <td>@item.FullName</td>
                 <td>@item.ContactNumber</td>
-                <td>@item.DateOfBirth.ToShortDateString()</td>
+                <td>@item.Age</td>
                 <td>@item.Email</td>
                 <td>@item.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")</td>
-                <td>@item.Weight</td>
                 <td>@item.Address</td>
-                <td>@(item.LastDonationDate.HasValue ? item.LastDonationDate.Value.ToShortDateString() : "N/A")</td>
+                <td>@item.LastDonationDate</td>
+                <td>
+                    @if (item.IsEligibleForDonation)
+                    {
+                        <span class="badge bg-success">Eligible</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Not Eligible</span>
+                    }
+                    
+                </td>
                 <td>
                     @if (!string.IsNullOrEmpty(item.ProfilePicture))
                     {

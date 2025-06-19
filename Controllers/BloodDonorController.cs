@@ -33,17 +33,30 @@ public class BloodDonorController : Controller
     }
     public IActionResult Index(string bloodGroup, string address)
     {
-        IQueryable<BloodDonor> donors = _context.BloodDonors;
+        IQueryable<BloodDonor> query = _context.BloodDonors;
         if (!string.IsNullOrEmpty(bloodGroup))
         {
-            donors = donors.Where(d => d.BloodGroup.ToString() == bloodGroup);
+            query = query.Where(d => d.BloodGroup.ToString() == bloodGroup);
         }
 
         if (!string.IsNullOrEmpty(address))
         {
-            donors = donors.Where(d => d.Address != null && d.Address.ToString() == address);
+            query = query.Where(d => d.Address != null && d.Address.ToString() == address);
         }
-        donors.ToList();
+        var donors = query.Select(d => new BloodDonorListViewModel
+        {
+            Id = d.Id,
+            FullName = d.FullName,
+            ContactNumber = d.ContactNumber,
+            Age = DateTime.Now.Year - d.DateOfBirth.Year,
+            Email = d.Email,
+            BloodGroup = d.BloodGroup.ToString(),
+            Address = d.Address,
+            ProfilePicture = d.ProfilePicture,
+            LastDonationDate = d.LastDonationDate.HasValue? $"{(DateTime.Today - d.LastDonationDate.Value).Days} days ago": "Never",
+            IsEligibleForDonation = (d.Weight >= 50 && d.Weight <= 150) && (d.LastDonationDate == null || (DateTime.Now - d.LastDonationDate.Value).TotalDays >= 90)
+        }).ToList();
+        // var donors = query.ToList();
         return View(donors);
     }
 
