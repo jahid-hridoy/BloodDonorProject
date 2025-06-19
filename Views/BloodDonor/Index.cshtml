@@ -7,6 +7,24 @@
 
 <h1>Blood Donor List</h1>
 
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <select name="bloodGroup" class="form-select">
+            <option value="">All Blood Groups</option>
+            @foreach (var bg in Enum.GetNames(typeof(BloodGroup)))
+            {
+                <option value="@bg">@bg.Replace("_Positive","+").Replace("_Negative","-")</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="address" class="form-control" placeholder="Search by address" />
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+</form>
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>

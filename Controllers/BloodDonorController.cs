@@ -31,9 +31,19 @@ public class BloodDonorController : Controller
         _context = context;
         _env = env;
     }
-    public IActionResult Index()
+    public IActionResult Index(string bloodGroup, string address)
     {
-        var donors = _context.BloodDonors.ToList();
+        IQueryable<BloodDonor> donors = _context.BloodDonors;
+        if (!string.IsNullOrEmpty(bloodGroup))
+        {
+            donors = donors.Where(d => d.BloodGroup.ToString() == bloodGroup);
+        }
+
+        if (!string.IsNullOrEmpty(address))
+        {
+            donors = donors.Where(d => d.Address != null && d.Address.ToString() == address);
+        }
+        donors.ToList();
         return View(donors);
     }
 
