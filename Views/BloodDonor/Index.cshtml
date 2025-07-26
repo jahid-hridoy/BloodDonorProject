@@ -39,6 +39,7 @@
 <table class="table table-bordered">
     <thead>
     <tr>
+        <th>@Html.DisplayNameFor(m => m.First().Id)</th>
         <th>@Html.DisplayNameFor(m => m.First().FullName)</th>
         <th>@Html.DisplayNameFor(m => m.First().ContactNumber)</th>
         <th>@Html.DisplayNameFor(m => m.First().Age)</th>
@@ -58,6 +59,7 @@
         foreach (var item in Model)
         {  
             <tr>
+                <td>@item.Id</td>
                 <td>@item.FullName</td>
                 <td>@item.ContactNumber</td>
                 <td>@item.Age</td>
@@ -74,17 +76,17 @@
                     {
                         <span class="badge bg-danger">Not Eligible</span>
                     }
-                    
+
                 </td>
                 <td>
-                    @if (!string.IsNullOrEmpty(item.ProfilePicture))
-                    {
-                        <img src="@item.ProfilePicture" alt="Profile Picture" style="width: 50px; height: 50px;"/>
-                    }
-                    else
-                    {
-                        <img src="ProfilePictures/profile-icon.png" alt="Profile Picture" style="width: 50px; height: 50px;"/>
-                    }
+                @if (!string.IsNullOrEmpty(item.ProfilePicture))
+                {
+                    <img src="@item.ProfilePicture" alt="Profile Picture" style="width: 50px; height: 50px;"/>
+                }
+                else
+                {
+                    <img src="ProfilePictures/profile-icon.png" alt="Profile Picture" style="width: 50px; height: 50px;"/>
+                }
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

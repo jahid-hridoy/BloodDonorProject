@@ -186,7 +186,7 @@ public class BloodDonorController : Controller
             }
             newDonor.ProfilePicture = Path.Combine("ProfilePictures", fileName);
         }    
-        _context.BloodDonors.Add(newDonor);
+        _context.BloodDonors.Update(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
