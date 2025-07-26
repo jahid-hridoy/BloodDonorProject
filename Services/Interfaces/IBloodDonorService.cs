@@ -6,7 +6,7 @@ namespace BloodDonorProject.Services.Interfaces;
 public interface IBloodDonorService
 {
     Task<BloodDonor?> GetByIdAsync(int id);
-    Task<IEnumerable<BloodDonor>> GetAllAsync();
+    Task<List<BloodDonorListViewModel>> GetAllAsync(string bloodGroup, string address, bool? eligible);
     void Add(BloodDonor bloodDonor);
     void Update(BloodDonor bloodDonor);
     void Delete(BloodDonor bloodDonor);

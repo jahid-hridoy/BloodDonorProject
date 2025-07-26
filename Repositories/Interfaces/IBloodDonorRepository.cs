@@ -5,7 +5,7 @@ namespace BloodDonorProject.Repositories.Interfaces;
 public interface IBloodDonorRepository
 {
     Task<BloodDonor?> GetByIdAsync(int id);
-    Task<IEnumerable<BloodDonor>> GetAllAsync();
+    IQueryable<BloodDonor> GetAllAsync();
     Task<IEnumerable<BloodDonor>> FindAllAsync(Expression<Func<BloodDonor, bool>> predicate);
     void Add(BloodDonor bloodDonor);
     void Update(BloodDonor bloodDonor);
