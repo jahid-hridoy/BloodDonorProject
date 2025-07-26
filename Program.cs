@@ -1,11 +1,17 @@
 using BloodDonorProject.Data;
+using BloodDonorProject.Repositories.Implementations;
+using BloodDonorProject.Repositories.Interfaces;
+using BloodDonorProject.Services.Implementations;
+using BloodDonorProject.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IFileService, FileService>();
+builder.Services.AddScoped<IBloodDonorService, BloodDonorService>();
+builder.Services.AddScoped<IBloodDonorRepository, BloodDonorRepository>();
 
 builder.Services.AddDbContext<BloodDonorDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

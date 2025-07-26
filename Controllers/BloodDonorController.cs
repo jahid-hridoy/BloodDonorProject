@@ -4,6 +4,7 @@ using BloodDonorProject.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
+using BloodDonorProject.Services.Interfaces;
 
 namespace BloodDonorProject.Controllers;
 
@@ -11,7 +12,8 @@ public class BloodDonorController : Controller
 {
     
     private readonly BloodDonorDbContext _context;
-    private readonly IWebHostEnvironment _env;
+    private readonly IFileService _fileService;
+    private readonly IBloodDonorService _bloodDonorService;
     private List<SelectListItem> GetBloodGroupSelectList()
     {
         return Enum.GetValues(typeof(BloodGroup))
@@ -26,10 +28,11 @@ public class BloodDonorController : Controller
             }).ToList();
     }
 
-    public BloodDonorController(BloodDonorDbContext context, IWebHostEnvironment env)
+    public BloodDonorController(BloodDonorDbContext context, IFileService fileService, IBloodDonorService bloodDonorService)
     {
         _context = context;
-        _env = env;
+        _fileService = fileService;
+        _bloodDonorService = bloodDonorService;
     }
     public IActionResult Index(string bloodGroup, string address, bool? eligible)
     {
@@ -84,32 +87,17 @@ public class BloodDonorController : Controller
             BloodGroup = donor.BloodGroup,
             Address = donor.Address,
             Weight = donor.Weight,
-            LastDonationDate = donor.LastDonationDate
+            LastDonationDate = donor.LastDonationDate,
+            ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture)
         };
-        if (donor.ProfilePicture != null && donor.ProfilePicture.Length > 0)
-        {   
-            Console.WriteLine(Path.GetExtension(donor.ProfilePicture.FileName));
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(donor.ProfilePicture.FileName)}";
-            var filePath = Path.Combine(_env.WebRootPath, "ProfilePictures");
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-            var fullPath = Path.Combine(filePath, fileName);
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await donor.ProfilePicture.CopyToAsync(stream);
-            }
-            newDonor.ProfilePicture = Path.Combine("ProfilePictures", fileName);
-        }    
         _context.BloodDonors.Add(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
 
-    public IActionResult Details(int id)
+    public async Task<IActionResult> Details(int id)
     {
-        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        var donor = await _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();
@@ -168,24 +156,9 @@ public class BloodDonorController : Controller
             BloodGroup = donor.BloodGroup,
             Address = donor.Address,
             Weight = donor.Weight,
-            LastDonationDate = donor.LastDonationDate
+            LastDonationDate = donor.LastDonationDate,
+            ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture)
         };
-        if (donor.ProfilePicture != null && donor.ProfilePicture.Length > 0)
-        {   
-            Console.WriteLine(Path.GetExtension(donor.ProfilePicture.FileName));
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(donor.ProfilePicture.FileName)}";
-            var filePath = Path.Combine(_env.WebRootPath, "ProfilePictures");
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-            var fullPath = Path.Combine(filePath, fileName);
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await donor.ProfilePicture.CopyToAsync(stream);
-            }
-            newDonor.ProfilePicture = Path.Combine("ProfilePictures", fileName);
-        }    
         _context.BloodDonors.Update(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
