@@ -28,6 +28,6 @@ public class FileService: IFileService
             }
             return Path.Combine("ProfilePictures", fileName);
         }
-        return string.Empty;
+        return null;
     }
 }

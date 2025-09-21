@@ -115,13 +115,13 @@ public class BloodDonorController : Controller
     }
     
     [HttpPost]
-    [HttpPut]
     public async Task<IActionResult> EditAsync(BloodDonorEditViewModel donor)
     {
         if (!ModelState.IsValid)
             return View(donor);
         var newDonor = new BloodDonor
         {
+            Id = donor.Id,
             FullName = donor.FullName,
             ContactNumber = donor.ContactNumber,
             DateOfBirth = donor.DateOfBirth,
@@ -130,8 +130,8 @@ public class BloodDonorController : Controller
             Address = donor.Address,
             Weight = donor.Weight,
             LastDonationDate = donor.LastDonationDate,
-            ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture)
         };
+        newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture) ?? donor.ExistingProfilePicture;
         _context.BloodDonors.Update(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
