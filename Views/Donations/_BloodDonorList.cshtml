@@ -1,7 +1,9 @@
-@model int?
+@model BloodDonorProject.Models.Donation
+
 <div class="form-group">
-    <label class="control-label">Donor</label>
-    <select class="form-control" asp-items="@(ViewData["donorList"] as SelectList)">
+    <label asp-for = "BloodDonorId" class="control-label">Donor</label>
+    <select asp-for="BloodDonorId"  class="form-control" asp-items="ViewBag.donorList">
         <option value="">-- Select Donor --</option>
     </select>
+    <span asp-validation-for="BloodDonorId" class="text-danger"></span>
 </div>

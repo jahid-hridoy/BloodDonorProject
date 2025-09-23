@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using BloodDonorProject.Services.Interfaces;
+using BloodDonorProject.Mapping;
+using AutoMapper;
 
 namespace BloodDonorProject.Controllers;
 
@@ -14,6 +16,7 @@ public class BloodDonorController : Controller
     private readonly BloodDonorDbContext _context;
     private readonly IFileService _fileService;
     private readonly IBloodDonorService _bloodDonorService;
+    private readonly IMapper _mapper;
     private List<SelectListItem> GetBloodGroupSelectList()
     {
         return Enum.GetValues(typeof(BloodGroup))
@@ -28,16 +31,18 @@ public class BloodDonorController : Controller
             }).ToList();
     }
 
-    public BloodDonorController(BloodDonorDbContext context, IFileService fileService, IBloodDonorService bloodDonorService)
+    public BloodDonorController(BloodDonorDbContext context, IFileService fileService, IBloodDonorService bloodDonorService, IMapper mapper)
     {
         _context = context;
         _fileService = fileService;
         _bloodDonorService = bloodDonorService;
+        _mapper = mapper;
     }
     public async Task<IActionResult> Index(string bloodGroup, string address, bool? eligible)
     {
         var donors = await _bloodDonorService.GetAllAsync(bloodGroup, address, eligible);
-        return View(donors);
+        var viewModelList = _mapper.Map<List<BloodDonorListViewModel>>(donors);
+        return View(viewModelList);
     }
 
     public IActionResult Create()
@@ -51,19 +56,9 @@ public class BloodDonorController : Controller
     {
         if (!ModelState.IsValid)
             return View(donor);
-        var newDonor = new BloodDonor
-        {
-            FullName = donor.FullName,
-            ContactNumber = donor.ContactNumber,
-            DateOfBirth = donor.DateOfBirth,
-            Email = donor.Email,
-            BloodGroup = donor.BloodGroup,
-            Address = donor.Address,
-            Weight = donor.Weight,
-            LastDonationDate = donor.LastDonationDate,
-            ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture)
-        };
-        _context.BloodDonors.Add(newDonor);
+        var newDonor = _mapper.Map<BloodDonor>(donor);
+        newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture);
+        await _context.BloodDonors.AddAsync(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
@@ -75,19 +70,7 @@ public class BloodDonorController : Controller
         {
             return NotFound();
         }
-        var viewModel = new BloodDonorListViewModel
-        {
-            Id = donor.Id,
-            FullName = donor.FullName,
-            ContactNumber = donor.ContactNumber,
-            Age = DateTime.Now.Year - donor.DateOfBirth.Year,
-            Email = donor.Email,
-            BloodGroup = donor.BloodGroup.ToString(),
-            Address = donor.Address,
-            ProfilePicture = donor.ProfilePicture,
-            LastDonationDate = donor.LastDonationDate.HasValue ? $"{(DateTime.Today - donor.LastDonationDate.Value).Days} days ago" : "Never",
-            IsEligibleForDonation = (donor.Weight >= 50 && donor.Weight <= 150) && (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90)
-        };
+        var viewModel = _mapper.Map<BloodDonorListViewModel>(donor);
         return View(viewModel);
     }
     
@@ -98,19 +81,7 @@ public class BloodDonorController : Controller
         {
             return NotFound();
         }
-        var viewModel = new BloodDonorEditViewModel
-        {
-            Id = donor.Id,
-            FullName = donor.FullName,
-            ContactNumber = donor.ContactNumber,
-            DateOfBirth = donor.DateOfBirth,
-            Email = donor.Email,
-            BloodGroup = donor.BloodGroup,
-            Address = donor.Address,
-            Weight = donor.Weight,
-            LastDonationDate = donor.LastDonationDate,
-            ExistingProfilePicture = donor.ProfilePicture
-        };
+        var viewModel = _mapper.Map<BloodDonorEditViewModel>(donor);
         return View(viewModel);
     }
     
@@ -119,18 +90,7 @@ public class BloodDonorController : Controller
     {
         if (!ModelState.IsValid)
             return View(donor);
-        var newDonor = new BloodDonor
-        {
-            Id = donor.Id,
-            FullName = donor.FullName,
-            ContactNumber = donor.ContactNumber,
-            DateOfBirth = donor.DateOfBirth,
-            Email = donor.Email,
-            BloodGroup = donor.BloodGroup,
-            Address = donor.Address,
-            Weight = donor.Weight,
-            LastDonationDate = donor.LastDonationDate,
-        };
+        var newDonor = _mapper.Map<BloodDonor>(donor);
         newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture) ?? donor.ExistingProfilePicture;
         _context.BloodDonors.Update(newDonor);
         _context.SaveChanges();
@@ -144,19 +104,7 @@ public class BloodDonorController : Controller
         {
             return NotFound();
         }
-        var viewModel = new BloodDonorListViewModel
-        {
-            Id = donor.Id,
-            FullName = donor.FullName,
-            ContactNumber = donor.ContactNumber,
-            Age = DateTime.Now.Year - donor.DateOfBirth.Year,
-            Email = donor.Email,
-            BloodGroup = donor.BloodGroup.ToString(),
-            Address = donor.Address,
-            ProfilePicture = donor.ProfilePicture,
-            LastDonationDate = donor.LastDonationDate.HasValue ? $"{(DateTime.Today - donor.LastDonationDate.Value).Days} days ago" : "Never",
-            IsEligibleForDonation = (donor.Weight >= 50 && donor.Weight <= 150) && (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90)
-        };
+        var viewModel = _mapper.Map<BloodDonorListViewModel>(donor);
         return View(viewModel);
     }
     

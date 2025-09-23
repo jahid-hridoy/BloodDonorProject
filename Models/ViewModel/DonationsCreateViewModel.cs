@@ -1,0 +1,24 @@
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+
+namespace BloodDonorProject.Models.ViewModel
+{
+    public class DonationsCreateViewModel
+    {
+            [Required]
+            public int BloodDonorId { get; set; }
+            public int? CampaignId { get; set; }
+
+            [Required]
+            [DataType(DataType.Date)]
+            public DateTime DonationDate { get; set; }
+
+            public string? Location { get; set; }
+
+            public IEnumerable<SelectListItem> Donors { get; set; } = Enumerable.Empty<SelectListItem>();
+
+            public IEnumerable<SelectListItem> Campaigns { get; set; } = Enumerable.Empty<SelectListItem>();
+
+            public Dictionary<string, string> CampaignLocations { get; set; } = new Dictionary<string, string>();
+        }
+}

@@ -1,4 +1,5 @@
 using BloodDonorProject.Data;
+using BloodDonorProject.Mapping;
 using BloodDonorProject.Repositories.Implementations;
 using BloodDonorProject.Repositories.Interfaces;
 using BloodDonorProject.Services.Implementations;
@@ -12,6 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddScoped<IBloodDonorService, BloodDonorService>();
 builder.Services.AddScoped<IBloodDonorRepository, BloodDonorRepository>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<BloodDonorDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

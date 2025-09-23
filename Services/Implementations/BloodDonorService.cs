@@ -19,7 +19,7 @@ public class BloodDonorService: IBloodDonorService
         return await _bloodDonorRepository.GetByIdAsync(id);
     }
 
-    public async Task<List<BloodDonorListViewModel>> GetAllAsync(string bloodGroup, string address, bool? eligible)
+    public async Task<List<BloodDonor>> GetAllAsync(string bloodGroup, string address, bool? eligible)
     {
         IQueryable<BloodDonor> query = _bloodDonorRepository.GetAllAsync(); // assuming this returns Task<IQueryable<...>>
 
@@ -33,45 +33,32 @@ public class BloodDonorService: IBloodDonorService
             query = query.Where(d => d.Address != null && d.Address.ToString() == address);
         }
 
-        var donors = await query.Select(d => new BloodDonorListViewModel
-        {
-            Id = d.Id,
-            FullName = d.FullName,
-            ContactNumber = d.ContactNumber,
-            Age = DateTime.Now.Year - d.DateOfBirth.Year,
-            Email = d.Email,
-            BloodGroup = d.BloodGroup.ToString(),
-            Address = d.Address,
-            ProfilePicture = d.ProfilePicture,
-            LastDonationDate = d.LastDonationDate.HasValue
-                ? $"{(DateTime.Today - d.LastDonationDate.Value).Days} days ago"
-                : "Never",
-            IsEligibleForDonation = (d.Weight >= 50 && d.Weight <= 150) &&
-                                    (d.LastDonationDate == null || (DateTime.Now - d.LastDonationDate.Value).TotalDays >= 90)
-        }).ToListAsync();
-
         if (eligible.HasValue)
         {
-            donors = donors.Where(d => d.IsEligibleForDonation == eligible.Value).ToList();
+            query = query.Where(d => IsEligible(d) == eligible.Value);
         }
 
-        return donors;
+        return query.ToList();
     }
 
-
+    public static bool IsEligible(BloodDonor donor)
+    {
+        return (donor.Weight >= 50 && donor.Weight <= 150) &&
+               (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90);
+    }
     public void Add(BloodDonor bloodDonor)
     {
-        throw new NotImplementedException();
+        _bloodDonorRepository.Add(bloodDonor);
     }
 
     public void Update(BloodDonor bloodDonor)
     {
-        throw new NotImplementedException();
+        _bloodDonorRepository.Update(bloodDonor);
     }
 
     public void Delete(BloodDonor bloodDonor)
     {
-        throw new NotImplementedException();
+        _bloodDonorRepository.Delete(bloodDonor);
     }   
     
 }

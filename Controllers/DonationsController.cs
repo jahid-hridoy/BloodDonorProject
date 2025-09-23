@@ -47,7 +47,6 @@ namespace BloodDonorProject.Controllers
         public IActionResult Create()
         {
             ViewBag.donorList = new SelectList(_context.BloodDonors, "Id", "FullName");
-            ViewData["donorList"] = new SelectList(_context.BloodDonors, "Id", "FullName");
             return View();
         }
 
@@ -60,7 +59,7 @@ namespace BloodDonorProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(donation);
+                _context.Donations.Add(donation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
