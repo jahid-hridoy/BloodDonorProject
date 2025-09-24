@@ -17,6 +17,7 @@ builder.Services.AddScoped<IBloodDonorService, BloodDonorService>();
 builder.Services.AddScoped<IDonationService, DonationService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBloodDonorRepository, BloodDonorRepository>();
+builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<BloodDonorDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

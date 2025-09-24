@@ -76,9 +76,9 @@ public class BloodDonorController : Controller
         return View(viewModel);
     }
 
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var donor = _bloodDonorService.GetByIdAsync(id);
+        var donor = await _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();
