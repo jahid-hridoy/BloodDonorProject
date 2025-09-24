@@ -1,3 +1,4 @@
+using BloodDonorProject.Data.Interfaces;
 using BloodDonorProject.Models;
 using BloodDonorProject.Repositories.Interfaces;
 using BloodDonorProject.Services.Interfaces;
@@ -7,21 +8,21 @@ namespace BloodDonorProject.Services.Implementations;
 
 public class BloodDonorService: IBloodDonorService
 {
-    private readonly IBloodDonorRepository _bloodDonorRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public BloodDonorService(IBloodDonorRepository bloodDonorRepository)
+    public BloodDonorService(IUnitOfWork unitOfWork)
     {
-        _bloodDonorRepository = bloodDonorRepository;
+        _unitOfWork = unitOfWork;
     }
-    
+
     public async Task<BloodDonor?> GetByIdAsync(int id)
     {
-        return await _bloodDonorRepository.GetByIdAsync(id);
+        return await _unitOfWork.bloodDonorRepository.GetByIdAsync(id);
     }
 
-    public async Task<List<BloodDonor>> GetAllAsync(string bloodGroup, string address, bool? eligible)
+    public IEnumerable<BloodDonor> GetAllAsync(string bloodGroup, string address, bool? eligible)
     {
-        IQueryable<BloodDonor> query = _bloodDonorRepository.GetAllAsync(); // assuming this returns Task<IQueryable<...>>
+        var query = _unitOfWork.bloodDonorRepository.GetAllAsync();
 
         if (!string.IsNullOrEmpty(bloodGroup))
         {
@@ -38,7 +39,7 @@ public class BloodDonorService: IBloodDonorService
             query = query.Where(d => IsEligible(d) == eligible.Value);
         }
 
-        return query.ToList();
+        return query.AsEnumerable();
     }
 
     public static bool IsEligible(BloodDonor donor)
@@ -48,17 +49,17 @@ public class BloodDonorService: IBloodDonorService
     }
     public void Add(BloodDonor bloodDonor)
     {
-        _bloodDonorRepository.Add(bloodDonor);
+        _unitOfWork.bloodDonorRepository.Add(bloodDonor);
     }
 
     public void Update(BloodDonor bloodDonor)
     {
-        _bloodDonorRepository.Update(bloodDonor);
+        _unitOfWork.bloodDonorRepository.Update(bloodDonor);
     }
 
     public void Delete(BloodDonor bloodDonor)
     {
-        _bloodDonorRepository.Delete(bloodDonor);
+        _unitOfWork.bloodDonorRepository.Delete(bloodDonor);
     }   
     
 }

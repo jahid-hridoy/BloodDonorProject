@@ -2,12 +2,7 @@ using System.Linq.Expressions;
 using BloodDonorProject.Models;
 namespace BloodDonorProject.Repositories.Interfaces;
 
-public interface IBloodDonorRepository
+public interface IBloodDonorRepository: IRepository<BloodDonor>
 {
-    Task<BloodDonor?> GetByIdAsync(int id);
-    IQueryable<BloodDonor> GetAllAsync();
-    Task<IEnumerable<BloodDonor>> FindAllAsync(Expression<Func<BloodDonor, bool>> predicate);
-    void Add(BloodDonor bloodDonor);
-    void Update(BloodDonor bloodDonor);
-    void Delete(BloodDonor bloodDonor);
+    
 }

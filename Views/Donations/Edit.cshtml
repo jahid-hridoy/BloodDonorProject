@@ -10,27 +10,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="BloodDonorId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="DonationDate" class="control-label"></label>
-                <input asp-for="DonationDate" class="form-control" />
+                <input asp-for="DonationDate" class="form-control" type="date" />
                 <span asp-validation-for="DonationDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="BloodDonorId" class="control-label"></label>
-                <input asp-for="BloodDonorId" class="form-control" />
-                <span asp-validation-for="BloodDonorId" class="text-danger"></span>
-            </div>
-            @* <div class="form-group"> *@
-            @*     <label asp-for="BloodDonorId" class="control-label">Donor</label> *@
-            @*     <select asp-for="BloodDonorId" class="form-control" asp-items="@(ViewData["donorList"] as SelectList)"> *@
-            @*         <option value="">-- Select Donor --</option> *@
-            @*     </select> *@
-            @*     <span asp-validation-for="BloodDonorId" class="text-danger"></span> *@
-            @* </div> *@
-            @await Html.PartialAsync("_BloodDonorList", Model.BloodDonorId)
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

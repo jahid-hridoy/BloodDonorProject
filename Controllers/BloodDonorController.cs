@@ -12,7 +12,7 @@ namespace BloodDonorProject.Controllers;
 
 public class BloodDonorController : Controller
 {
-    
+
     private readonly BloodDonorDbContext _context;
     private readonly IFileService _fileService;
     private readonly IBloodDonorService _bloodDonorService;
@@ -38,9 +38,9 @@ public class BloodDonorController : Controller
         _bloodDonorService = bloodDonorService;
         _mapper = mapper;
     }
-    public async Task<IActionResult> Index(string bloodGroup, string address, bool? eligible)
+    public IActionResult Index(string bloodGroup, string address, bool? eligible)
     {
-        var donors = await _bloodDonorService.GetAllAsync(bloodGroup, address, eligible);
+        var donors = _bloodDonorService.GetAllAsync(bloodGroup, address, eligible);
         var viewModelList = _mapper.Map<List<BloodDonorListViewModel>>(donors);
         return View(viewModelList);
     }
@@ -50,15 +50,17 @@ public class BloodDonorController : Controller
         ViewBag.BloodGroupList = GetBloodGroupSelectList();
         return View();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateAsync(BloodDonorCreateViewModel donor)
     {
         if (!ModelState.IsValid)
             return View(donor);
         var newDonor = _mapper.Map<BloodDonor>(donor);
-        newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture);
-        await _context.BloodDonors.AddAsync(newDonor);
+        newDonor.ProfilePicture = donor.ProfilePicture != null
+            ? await _fileService.SaveFileAsync(donor.ProfilePicture)
+            : null;
+        _bloodDonorService.Add(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
@@ -73,10 +75,10 @@ public class BloodDonorController : Controller
         var viewModel = _mapper.Map<BloodDonorListViewModel>(donor);
         return View(viewModel);
     }
-    
+
     public IActionResult Edit(int id)
     {
-        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        var donor = _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();
@@ -84,7 +86,7 @@ public class BloodDonorController : Controller
         var viewModel = _mapper.Map<BloodDonorEditViewModel>(donor);
         return View(viewModel);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> EditAsync(BloodDonorEditViewModel donor)
     {
@@ -92,14 +94,14 @@ public class BloodDonorController : Controller
             return View(donor);
         var newDonor = _mapper.Map<BloodDonor>(donor);
         newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture) ?? donor.ExistingProfilePicture;
-        _context.BloodDonors.Update(newDonor);
+        _bloodDonorService.Update(newDonor);
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
-    
+
     public IActionResult Delete(int id)
     {
-        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        var donor = _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();
@@ -107,19 +109,17 @@ public class BloodDonorController : Controller
         var viewModel = _mapper.Map<BloodDonorListViewModel>(donor);
         return View(viewModel);
     }
-    
+
     [ActionName("DeleteConfirmed")]
-    public IActionResult DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var donor = _context.BloodDonors.FirstOrDefault(d => d.Id == id);
+        var donor = await _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();
         }
-        _context.BloodDonors.Remove(donor);
-        _context.SaveChanges();
+        _bloodDonorService.Delete(donor);
         return RedirectToAction("Index");
     }
-
 }
 

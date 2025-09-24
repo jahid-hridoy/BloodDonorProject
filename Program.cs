@@ -1,4 +1,6 @@
 using BloodDonorProject.Data;
+using BloodDonorProject.Data.Implementations;
+using BloodDonorProject.Data.Interfaces;
 using BloodDonorProject.Mapping;
 using BloodDonorProject.Repositories.Implementations;
 using BloodDonorProject.Repositories.Interfaces;
@@ -12,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddScoped<IBloodDonorService, BloodDonorService>();
+builder.Services.AddScoped<IDonationService, DonationService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBloodDonorRepository, BloodDonorRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

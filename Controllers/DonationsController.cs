@@ -7,34 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BloodDonorProject.Data;
 using BloodDonorProject.Models;
+using BloodDonorProject.Services.Implementations;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using BloodDonorProject.Data.Interfaces;
+using BloodDonorProject.Services.Interfaces;
 
 namespace BloodDonorProject.Controllers
 {
     public class DonationsController : Controller
     {
+        private readonly IDonationService _donationService;
+        private readonly IBloodDonorService _bloodDonorService;
         private readonly BloodDonorDbContext _context;
-
-        public DonationsController(BloodDonorDbContext context)
+        public DonationsController(IDonationService donationService, IBloodDonorService bloodDonorService, BloodDonorDbContext context)
         {
+            _donationService = donationService;
+            _bloodDonorService = bloodDonorService;
             _context = context;
         }
 
         // GET: Donations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Donations.ToListAsync());
+            return View(await _donationService.GetAllDonationsAsync());
         }
 
         // GET: Donations/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var donation = await _context.Donations
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var donation = await _donationService.GetDonationByIdAsync(id);
             if (donation == null)
             {
                 return NotFound();
@@ -59,22 +60,17 @@ namespace BloodDonorProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Donations.Add(donation);
-                await _context.SaveChangesAsync();
+                await _donationService.CreateDonation(donation);
                 return RedirectToAction(nameof(Index));
             }
             return View(donation);
         }
 
+        [HttpGet]
         // GET: Donations/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var donation = await _context.Donations.FindAsync(id);
+            var donation = await _donationService.GetDonationByIdAsync(id);
             if (donation == null)
             {
                 return NotFound();
@@ -89,28 +85,15 @@ namespace BloodDonorProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DonationDate,BloodDonorId")] Donation donation)
         {
-            if (id != donation.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(donation);
-                    await _context.SaveChangesAsync();
+                    await _donationService.UpdateDonation(id, donation);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!DonationExists(donation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -118,15 +101,9 @@ namespace BloodDonorProject.Controllers
         }
 
         // GET: Donations/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var donation = await _context.Donations
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var donation = await _donationService.GetDonationByIdAsync(id);
             if (donation == null)
             {
                 return NotFound();
@@ -140,19 +117,8 @@ namespace BloodDonorProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var donation = await _context.Donations.FindAsync(id);
-            if (donation != null)
-            {
-                _context.Donations.Remove(donation);
-            }
-
-            await _context.SaveChangesAsync();
+            await _donationService.DeleteDonation(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DonationExists(int id)
-        {
-            return _context.Donations.Any(e => e.Id == id);
         }
     }
 }
