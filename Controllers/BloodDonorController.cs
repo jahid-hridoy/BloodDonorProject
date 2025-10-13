@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using BloodDonorProject.Services.Interfaces;
 using BloodDonorProject.Mapping;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BloodDonorProject.Controllers;
 
@@ -38,6 +39,8 @@ public class BloodDonorController : Controller
         _bloodDonorService = bloodDonorService;
         _mapper = mapper;
     }
+
+    [AllowAnonymous]
     public IActionResult Index(string bloodGroup, string address, bool? eligible)
     {
         var donors = _bloodDonorService.GetAllAsync(bloodGroup, address, eligible);
@@ -45,6 +48,7 @@ public class BloodDonorController : Controller
         return View(viewModelList);
     }
 
+    [Authorize]
     public IActionResult Create()
     {
         ViewBag.BloodGroupList = GetBloodGroupSelectList();
@@ -61,7 +65,6 @@ public class BloodDonorController : Controller
             ? await _fileService.SaveFileAsync(donor.ProfilePicture)
             : null;
         _bloodDonorService.Add(newDonor);
-        _context.SaveChanges();
         return RedirectToAction("Index");
     }
 
@@ -95,13 +98,13 @@ public class BloodDonorController : Controller
         var newDonor = _mapper.Map<BloodDonor>(donor);
         newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture) ?? donor.ExistingProfilePicture;
         _bloodDonorService.Update(newDonor);
-        _context.SaveChanges();
         return RedirectToAction("Index");
     }
 
-    public IActionResult Delete(int id)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(int id)
     {
-        var donor = _bloodDonorService.GetByIdAsync(id);
+        var donor = await _bloodDonorService.GetByIdAsync(id);
         if (donor == null)
         {
             return NotFound();

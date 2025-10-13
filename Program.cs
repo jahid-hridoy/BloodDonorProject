@@ -1,12 +1,18 @@
+using BloodDonorProject.Configurations;
 using BloodDonorProject.Data;
 using BloodDonorProject.Data.Implementations;
 using BloodDonorProject.Data.Interfaces;
 using BloodDonorProject.Mapping;
+using BloodDonorProject.Middleware;
 using BloodDonorProject.Repositories.Implementations;
 using BloodDonorProject.Repositories.Interfaces;
 using BloodDonorProject.Services.Implementations;
 using BloodDonorProject.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +28,22 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<BloodDonorDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<BloodDonorDbContext>()
+.AddDefaultTokenProviders()
+.AddDefaultUI();
+
+builder.Services.AddRazorPages();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+builder.Services.AddSerilog();
+builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSetting"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,11 +54,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<IPWhiteListingMiddleware>();
+
 app.UseStaticFiles();
 app.UseHttpMethodOverride();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -45,6 +71,7 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+app.MapRazorPages();
 
 
 app.Run();

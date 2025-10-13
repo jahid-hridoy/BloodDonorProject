@@ -36,7 +36,9 @@ public class BloodDonorService: IBloodDonorService
 
         if (eligible.HasValue)
         {
-            query = query.Where(d => IsEligible(d) == eligible.Value);
+            var thresholdDate = DateTime.Now.AddDays(-90);
+            query = query.Where(donor => ((donor.Weight >= 50 && donor.Weight <= 150) &&
+               ((donor.LastDonationDate == null) || (donor.LastDonationDate <= thresholdDate))) == eligible.Value);
         }
 
         return query.AsEnumerable();
@@ -50,16 +52,19 @@ public class BloodDonorService: IBloodDonorService
     public void Add(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Add(bloodDonor);
+        _unitOfWork.SaveAsync();
     }
 
     public void Update(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Update(bloodDonor);
+        _unitOfWork.SaveAsync();
     }
 
     public void Delete(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Delete(bloodDonor);
+        _unitOfWork.SaveAsync();
     }   
     
 }

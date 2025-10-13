@@ -1,8 +1,10 @@
 using BloodDonorProject.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace BloodDonorProject.Data;
 
-public class BloodDonorDbContext: DbContext
+public class BloodDonorDbContext: IdentityDbContext<IdentityUser>
 {
     public BloodDonorDbContext(DbContextOptions<BloodDonorDbContext> options) : base(options)
     {
