@@ -3,6 +3,7 @@ using BloodDonorProject.Models;
 using BloodDonorProject.Repositories.Interfaces;
 using BloodDonorProject.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace BloodDonorProject.Services.Implementations;
 
@@ -26,12 +27,15 @@ public class BloodDonorService: IBloodDonorService
 
         if (!string.IsNullOrEmpty(bloodGroup))
         {
-            query = query.Where(d => d.BloodGroup.ToString() == bloodGroup);
+            if (Enum.TryParse<BloodGroup>(bloodGroup, out var groupEnum))
+            {
+                query = query.Where(d => d.BloodGroup == groupEnum);
+            }
         }
 
         if (!string.IsNullOrEmpty(address))
         {
-            query = query.Where(d => d.Address != null && d.Address.ToString() == address);
+            query = query.Where(d => d.Address != null && d.Address.Contains(address));
         }
 
         if (eligible.HasValue)
@@ -49,22 +53,22 @@ public class BloodDonorService: IBloodDonorService
         return (donor.Weight >= 50 && donor.Weight <= 150) &&
                (donor.LastDonationDate == null || (DateTime.Now - donor.LastDonationDate.Value).TotalDays >= 90);
     }
-    public void Add(BloodDonor bloodDonor)
+    public async Task Add(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Add(bloodDonor);
-        _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync();
     }
 
-    public void Update(BloodDonor bloodDonor)
+    public async Task Update(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Update(bloodDonor);
-        _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync();
     }
 
-    public void Delete(BloodDonor bloodDonor)
+    public async Task Delete(BloodDonor bloodDonor)
     {
         _unitOfWork.bloodDonorRepository.Delete(bloodDonor);
-        _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync();
     }   
     
 }

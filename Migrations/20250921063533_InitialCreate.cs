@@ -24,7 +24,8 @@ namespace BloodDonorProject.Migrations
                     BloodGroup = table.Column<int>(type: "int", nullable: false),
                     Weight = table.Column<float>(type: "real", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastDonationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastDonationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

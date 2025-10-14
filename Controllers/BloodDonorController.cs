@@ -64,7 +64,7 @@ public class BloodDonorController : Controller
         newDonor.ProfilePicture = donor.ProfilePicture != null
             ? await _fileService.SaveFileAsync(donor.ProfilePicture)
             : null;
-        _bloodDonorService.Add(newDonor);
+        await _bloodDonorService.Add(newDonor);
         return RedirectToAction("Index");
     }
 
@@ -97,7 +97,7 @@ public class BloodDonorController : Controller
             return View(donor);
         var newDonor = _mapper.Map<BloodDonor>(donor);
         newDonor.ProfilePicture = await _fileService.SaveFileAsync(donor.ProfilePicture) ?? donor.ExistingProfilePicture;
-        _bloodDonorService.Update(newDonor);
+        await _bloodDonorService.Update(newDonor);
         return RedirectToAction("Index");
     }
 
@@ -121,7 +121,7 @@ public class BloodDonorController : Controller
         {
             return NotFound();
         }
-        _bloodDonorService.Delete(donor);
+        await _bloodDonorService.Delete(donor);
         return RedirectToAction("Index");
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodDonorProject.Migrations
 {
     [DbContext(typeof(BloodDonorDbContext))]
-    [Migration("20250618144534_ChangeLastDonationDateTypeToNullable")]
-    partial class ChangeLastDonationDateTypeToNullable
+    [Migration("20250921063533_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
