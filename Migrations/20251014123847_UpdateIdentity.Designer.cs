@@ -4,6 +4,7 @@ using BloodDonorProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodDonorProject.Migrations
 {
     [DbContext(typeof(BloodDonorDbContext))]
-    partial class BloodDonorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251014123847_UpdateIdentity")]
+    partial class UpdateIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,20 +67,6 @@ namespace BloodDonorProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BloodDonors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = -1,
-                            Address = "123 Main St, City, Country",
-                            BloodGroup = 0,
-                            ContactNumber = "123-456-7890",
-                            DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "john@gmail.com",
-                            FullName = "John Doe",
-                            LastDonationDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Weight = 70f
-                        });
                 });
 
             modelBuilder.Entity("BloodDonorProject.Models.Donation", b =>
