@@ -11,9 +11,11 @@ using BloodDonorProject.Services.Implementations;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using BloodDonorProject.Data.Interfaces;
 using BloodDonorProject.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BloodDonorProject.Controllers
 {
+    [Authorize(Roles = "Donor,Admin")]
     public class DonationsController : Controller
     {
         private readonly IDonationService _donationService;

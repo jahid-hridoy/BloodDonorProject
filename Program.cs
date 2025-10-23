@@ -2,6 +2,7 @@ using BloodDonorProject.Configurations;
 using BloodDonorProject.Data;
 using BloodDonorProject.Data.Implementations;
 using BloodDonorProject.Data.Interfaces;
+using BloodDonorProject.Extensions;
 using BloodDonorProject.Mapping;
 using BloodDonorProject.Middleware;
 using BloodDonorProject.Repositories.Implementations;
@@ -80,19 +81,6 @@ app.MapControllerRoute(
     .WithStaticAssets();
 app.MapRazorPages();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        await SeedData.InitializeAsync(services);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding role identity");
-    }
-}
-
+await app.SeedDatabaseAsync();
 
 app.Run();
