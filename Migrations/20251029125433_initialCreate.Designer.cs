@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodDonorProject.Migrations
 {
     [DbContext(typeof(BloodDonorDbContext))]
-    [Migration("20251013094414_AddedIdentyDbContext")]
-    partial class AddedIdentyDbContext
+    [Migration("20251029125433_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,20 @@ namespace BloodDonorProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BloodDonors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            Address = "123 Main St, City, Country",
+                            BloodGroup = 0,
+                            ContactNumber = "123-456-7890",
+                            DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "john@gmail.com",
+                            FullName = "John Doe",
+                            LastDonationDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Weight = 70f
+                        });
                 });
 
             modelBuilder.Entity("BloodDonorProject.Models.Donation", b =>

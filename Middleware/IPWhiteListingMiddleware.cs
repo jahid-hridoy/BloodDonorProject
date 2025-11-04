@@ -21,16 +21,17 @@ namespace BloodDonorProject.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var remoteIp = context.Connection.RemoteIpAddress;
-            if (remoteIp != null && _whitelistedIPs.Contains(remoteIp.ToString()))
-            {
-                await _next(context);
-            }
-            else
-            {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync("Forbidden: Your IP is not allowed to access this resource.");
-                return;
-            }
+            await _next(context);
+            //if (remoteIp != null && _whitelistedIPs.Contains(remoteIp.ToString()))
+            //{
+            //    await _next(context);
+            //}
+            //else
+            //{
+            //    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            //    await context.Response.WriteAsync("Forbidden: Your IP is not allowed to access this resource.");
+            //    return;
+            //}
         }
     }
 }
