@@ -1,38 +1,163 @@
 @model BloodDonorListViewModel
 
 @{
-    ViewData["Title"] = "Donor Details";
+    ViewData["Title"] = "Donor Profile";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="row g-0">
-            <div class="col-md-4 text-center p-4">
-                @if (!string.IsNullOrEmpty(Model.ProfilePicture))
-                {
-                    <img src="~/@Model.ProfilePicture" class="img-fluid circle border" style="max-width: 200px;" />
-                }
-                else
-                {
-                    <i class="fas fa-user-circle fa-3x text-secondary"></i>
-                }
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-danger">Donor Profile</h2>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold shadow-sm">
+                <i class="bi bi-pencil-square me-2"></i>Edit Profile
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary fw-bold shadow-sm ms-2">
+                <i class="bi bi-arrow-left me-2"></i>Back to Registry
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar: Profile & Key Stats -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-5">
+                    <div class="position-relative d-inline-block mb-4">
+                        <img src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/ProfilePictures/profile-icon.png" : "/" + Model.ProfilePicture)" 
+                             class="rounded-circle border border-4 border-danger border-opacity-10 shadow" 
+                             style="width: 180px; height: 180px; object-fit: cover;" />
+                        <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-danger border border-white p-2" style="font-size: 1.2rem;">
+                            @Model.BloodGroup.Replace("_Positive", "+").Replace("_Negative", "-")
+                        </span>
+                    </div>
+                    
+                    <h4 class="fw-bold mb-1">@Model.FullName</h4>
+                    <p class="text-muted mb-4">Registered Donor</p>
+                    
+                    <div class="p-3 bg-light rounded-4 mb-4">
+                        <div class="row g-0">
+                            <div class="col-6 border-end">
+                                <p class="small text-muted mb-1">Status</p>
+                                @if (Model.IsEligibleForDonation)
+                                {
+                                    <span class="badge bg-success-subtle text-success fw-bold">Eligible</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary fw-bold">Ineligible</span>
+                                }
+                            </div>
+                            <div class="col-6">
+                                <p class="small text-muted mb-1">Age</p>
+                                <span class="fw-bold">@Model.Age Years</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-start">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-danger bg-opacity-10 text-danger rounded-3 p-2 me-3">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-0">Contact Number</p>
+                                <p class="fw-semibold mb-0">@Model.ContactNumber</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-danger bg-opacity-10 text-danger rounded-3 p-2 me-3">
+                                <i class="bi bi-envelope-fill"></i>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-0">Email Address</p>
+                                <p class="fw-semibold mb-0">@Model.Email</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h3 class="card-title">@Model.FullName</h3>
-                    <p><strong>Blood Group:</strong> @Model.BloodGroup.Replace("_Positive","+").Replace("_Negative","-")</p>
-                    <p><strong>Contact:</strong> @Model.ContactNumber</p>
-                    <p><strong>Email:</strong> @Model.Email</p>
-                    <p><strong>Address:</strong> @Model.Address</p>
-                    <p><strong>Age:</strong> @Model.Age</p>
-                    <p><strong>Last Donation:</strong> @Model.LastDonationDate</p>
-                    <p><strong>Eligibility:</strong> <span class="badge @(Model.IsEligibleForDonation ? "bg-success" : "bg-danger")">@(Model.IsEligibleForDonation ? "Eligible" : "Not eligible")</span></p>
+        </div>
 
+        <!-- Main Content: Detailed Information & History -->
+        <div class="col-lg-8">
+            <!-- Personal Information Table -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-person-lines-fill me-2 text-danger"></i>Account Information</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-responsive mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="ps-4 text-muted py-3" style="width: 30%;">Full Legal Name</td>
+                                <td class="fw-semibold py-3">@Model.FullName</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 text-muted py-3">Physical Address</td>
+                                <td class="py-3">@Model.Address</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 text-muted py-3">Blood Type</td>
+                                <td class="py-3">
+                                    <span class="badge bg-danger">@Model.BloodGroup.Replace("_Positive", "+").Replace("_Negative", "-")</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 text-muted py-3">Last Donation</td>
+                                <td class="py-3">@Model.LastDonationDate</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <!-- Donation History Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-danger"></i>Donation History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Donation Date</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Donation ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.DonationHistory != null && Model.DonationHistory.Any())
+                                {
+                                    foreach (var donation in Model.DonationHistory.OrderByDescending(d => d.DonationDate))
+                                    {
+                                        <tr>
+                                            <td class="ps-4 fw-semibold">@donation.DonationDate.ToString("MMMM dd, yyyy")</td>
+                                            <td><span class="badge bg-success-subtle text-success">Completed</span></td>
+                                            <td class="text-end pe-4 text-muted small">#@donation.Id</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted">
+                                            <i class="bi bi-droplet-half d-block fs-1 mb-2 opacity-25"></i>
+                                            No donation records found for this donor.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .rounded-4 { border-radius: 1rem !important; }
+    .bg-success-subtle { background-color: rgba(25, 135, 84, 0.1) !important; }
+    .bg-secondary-subtle { background-color: rgba(108, 117, 125, 0.1) !important; }
+</style>

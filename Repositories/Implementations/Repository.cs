@@ -8,8 +8,8 @@ namespace BloodDonorProject.Repositories.Implementations
 {
     public class Repository<T>: IRepository<T> where T : class
     {
-        private readonly BloodDonorDbContext _context;
-        private readonly DbSet<T> dbSet;
+        protected readonly BloodDonorDbContext _context;
+        protected readonly DbSet<T> dbSet;
 
         public Repository(BloodDonorDbContext context)
         {

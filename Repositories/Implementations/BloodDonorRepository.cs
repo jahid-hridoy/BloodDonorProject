@@ -8,8 +8,14 @@ namespace BloodDonorProject.Repositories.Implementations;
 
 public class BloodDonorRepository: Repository<BloodDonor>, IBloodDonorRepository
 {
-    public BloodDonorRepository(BloodDonorDbContext context): base(context)
+    public BloodDonorRepository(BloodDonorDbContext context) : base(context)
     {
-        
+    }
+
+    public new async Task<BloodDonor?> GetByIdAsync(int id)
+    {
+        return await _context.BloodDonors
+            .Include(d => d.Donations)
+            .FirstOrDefaultAsync(d => d.Id == id);
     }
 }

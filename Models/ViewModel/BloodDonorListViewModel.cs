@@ -19,5 +19,11 @@ public class BloodDonorListViewModel
     [Required]
     public string LastDonationDate { get; set; }
     public bool IsEligibleForDonation { get; set; }
-    
-}
+    public List<DonationHistoryViewModel> DonationHistory { get; set; } = new();
+    }
+
+    public class DonationHistoryViewModel
+    {
+    public int Id { get; set; }
+    public DateTime DonationDate { get; set; }
+    }

@@ -10,12 +10,12 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-danger">🩸 Blood Donor Directory</h2>
-            <p class="text-muted mb-0">Find and manage registered blood donors</p>
+            <h2 class="fw-bold text-danger">Donor Registry</h2>
+            <p class="text-muted mb-0">Manage and search for registered blood donors within the system.</p>
         </div>
 
-        <a asp-action="Create" class="btn btn-danger px-4">
-            + Add New Donor
+        <a asp-action="Create" class="btn btn-danger px-4 fw-bold">
+            <i class="bi bi-person-plus-fill me-2"></i>Register New Donor
         </a>
     </div>
 
@@ -26,8 +26,8 @@
 
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Blood Group</label>
-                    <select name="bloodGroup" class="form-select">
-                        <option value="">All</option>
+                    <select name="bloodGroup" class="form-select shadow-sm">
+                        <option value="">All Groups</option>
                         @foreach (var bg in Enum.GetNames(typeof(BloodGroup)))
                         {
                             <option value="@bg">@bg.Replace("_Positive", "+").Replace("_Negative", "-")</option>
@@ -36,22 +36,22 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Address</label>
-                    <input type="text" name="address" class="form-control" placeholder="Search by area">
+                    <label class="form-label fw-semibold">Location</label>
+                    <input type="text" name="address" class="form-control shadow-sm" placeholder="Search by area">
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Eligibility</label>
-                    <select name="eligible" class="form-select">
-                        <option value="">All</option>
-                        <option value="true">Eligible</option>
-                        <option value="false">Not Eligible</option>
+                    <label class="form-label fw-semibold">Availability</label>
+                    <select name="eligible" class="form-select shadow-sm">
+                        <option value="">All Statuses</option>
+                        <option value="true">Eligible to Donate</option>
+                        <option value="false">Currently Ineligible</option>
                     </select>
                 </div>
 
                 <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-danger w-100">
-                       Search
+                    <button type="submit" class="btn btn-danger w-100 fw-bold shadow-sm">
+                       Filter Results
                     </button>
                 </div>
 
@@ -60,63 +60,88 @@
     </div>
 
     <!-- Donor Table -->
-    <div class="card shadow border-0">
+    <div class="card shadow-sm border-0 overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-danger text-center">
+                <thead class="bg-white border-bottom">
                     <tr>
-                        <th>ID</th>
-                        <th>Donor</th>
-                        <th>Contact</th>
-                        <th>Age</th>
-                        <th>Email</th>
-                        <th>Blood</th>
-                        <th>Address</th>
-                        <th>Last Donation</th>
-                        <th>Status</th>
-                        <th>Photo</th>
-                        <th>Actions</th>
+                        <th class="ps-4 py-3 text-muted fw-bold small text-uppercase">Donor Information</th>
+                        <th class="py-3 text-muted fw-bold small text-uppercase text-center">Blood Group</th>
+                        <th class="py-3 text-muted fw-bold small text-uppercase text-center">Eligibility</th>
+                        <th class="py-3 text-muted fw-bold small text-uppercase">Contact & Location</th>
+                        <th class="py-3 text-muted fw-bold small text-uppercase">Last Activity</th>
+                        <th class="pe-4 py-3 text-muted fw-bold small text-uppercase text-end">Management</th>
                     </tr>
                 </thead>
 
-                <tbody class="text-center">
-
+                <tbody>
                     @if (Model != null && Model.Any())
                     {
                         foreach (var item in Model)
                         {
-                            <tr>
-                                <td class="fw-semibold">@item.Id</td>
-                                <td class="fw-semibold">@item.FullName</td>
-                                <td>@item.ContactNumber</td>
-                                <td>@item.Age</td>
-                                <td>@item.Email</td>
-                                <td>
-                                    <span class="badge bg-danger fs-6">
-                                        @item.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")
-                                    </span>
+                            <tr class="donor-row">
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="@(string.IsNullOrEmpty(item.ProfilePicture) ? "/ProfilePictures/profile-icon.png" : "/" + item.ProfilePicture)"
+                                             class="rounded-circle border shadow-sm me-3"
+                                             style="width:48px; height:48px; object-fit:cover">
+                                        <div>
+                                            <div class="fw-bold text-dark fs-6">@item.FullName</div>
+                                            <div class="text-muted small">
+                                                <i class="bi bi-envelope me-1"></i>@item.Email
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td>@item.Address</td>
-                                <td>@item.LastDonationDate</td>
-                                <td>
+                                <td class="text-center">
+                                    <div class="blood-badge-container">
+                                        <span class="blood-badge shadow-sm">
+                                            @item.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
                                     @if (item.IsEligibleForDonation)
                                     {
-                                        <span class="badge bg-success">Eligible</span>
+                                        <div class="status-indicator">
+                                            <span class="dot bg-success"></span>
+                                            <span class="text-success fw-bold small uppercase">Eligible</span>
+                                        </div>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">Not Eligible</span>
+                                        <div class="status-indicator">
+                                            <span class="dot bg-secondary"></span>
+                                            <span class="text-muted fw-bold small uppercase">Deferred</span>
+                                        </div>
                                     }
                                 </td>
                                 <td>
-                                    <img src="@(string.IsNullOrEmpty(item.ProfilePicture) ? "/ProfilePictures/profile-icon.png" : item.ProfilePicture)"
-                                         class="rounded-circle border"
-                                         style="width:45px;height:45px;object-fit:cover">
+                                    <div class="small mb-1">
+                                        <i class="bi bi-telephone text-danger me-2"></i>@item.ContactNumber
+                                    </div>
+                                    <div class="small text-muted text-truncate" style="max-width: 200px;">
+                                        <i class="bi bi-geo-alt me-2"></i>@item.Address
+                                    </div>
                                 </td>
                                 <td>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">View</a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Edit</a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    <div class="fw-semibold small text-dark">
+                                        @(item.LastDonationDate == "Never" ? "No records" : item.LastDonationDate)
+                                    </div>
+                                    <div class="text-muted tiny mt-1 text-uppercase fw-bold">Recent History</div>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group shadow-sm rounded-3">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-white btn-sm border" title="Profile">
+                                            <i class="bi bi-person-badge text-primary"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-white btn-sm border" title="Edit">
+                                            <i class="bi bi-pencil-square text-warning"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-white btn-sm border" title="Remove">
+                                            <i class="bi bi-trash3 text-danger"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -124,14 +149,74 @@
                     else
                     {
                         <tr>
-                            <td colspan="11" class="py-4 text-muted">
-                                No donors found.
+                            <td colspan="6" class="py-5 text-center">
+                                <div class="empty-state py-4">
+                                    <i class="bi bi-search fs-1 text-muted opacity-25 d-block mb-3"></i>
+                                    <h5 class="text-dark fw-bold">No results match your search</h5>
+                                    <p class="text-muted">Try adjusting your filters to find what you're looking for.</p>
+                                    <a asp-action="Index" class="btn btn-outline-danger btn-sm mt-2">Clear All Filters</a>
+                                </div>
                             </td>
                         </tr>
                     }
-
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<style>
+    .donor-row:hover {
+        background-color: #fcfcfc;
+    }
+    
+    .blood-badge {
+        background-color: #fff;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        display: inline-block;
+        min-width: 50px;
+    }
+
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        background: #f8f9fa;
+        border-radius: 30px;
+        border: 1px solid #eee;
+    }
+
+    .status-indicator .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .tiny {
+        font-size: 0.65rem;
+        letter-spacing: 0.5px;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-white {
+        background: white;
+    }
+    
+    .btn-white:hover {
+        background: #f8f9fa;
+    }
+
+    .btn-group .btn:not(:last-child) {
+        border-right: none !important;
+    }
+</style>

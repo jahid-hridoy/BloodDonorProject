@@ -21,7 +21,7 @@ public class BloodDonorService: IBloodDonorService
         return await _unitOfWork.bloodDonorRepository.GetByIdAsync(id);
     }
 
-    public IEnumerable<BloodDonor> GetAllAsync(string bloodGroup, string address, bool? eligible)
+    public IEnumerable<BloodDonor> GetAllAsync(string? bloodGroup, string? address, bool? eligible)
     {
         var query = _unitOfWork.bloodDonorRepository.GetAllAsync();
 

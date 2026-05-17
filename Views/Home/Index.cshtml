@@ -1,8 +1,128 @@
-﻿@{
+@model BloodDonorProject.Models.ViewModel.HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="row align-items-center py-5">
+    <div class="col-lg-7">
+        <h1 class="display-3 fw-bold mb-3 text-dark">Donate Blood, <span class="text-danger">Save Lives</span></h1>
+        <p class="lead text-secondary mb-4 fs-4">
+            Your contribution can make a difference. Every drop counts. Join our community of life-savers today and help those in need.
+        </p>
+        <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+            <a asp-controller="BloodDonor" asp-action="Create" class="btn btn-danger btn-lg px-5 py-3 shadow-sm fw-bold">Become a Donor</a>
+            <a asp-controller="Donations" asp-action="Index" class="btn btn-outline-dark btn-lg px-5 py-3">View Donations</a>
+        </div>
+    </div>
+    <div class="col-lg-5 d-none d-lg-block text-center">
+        <div class="bg-danger bg-opacity-10 rounded-circle p-5 d-inline-block shadow-sm">
+            <span style="font-size: 10rem;">🩸</span>
+        </div>
+    </div>
 </div>
+
+<!-- Stats Section -->
+<div class="row g-4 py-5 border-top">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="text-danger mb-3">
+                    <i class="bi bi-people-fill fs-1"></i>
+                </div>
+                <h2 class="display-5 fw-bold text-dark">@Model.TotalDonors</h2>
+                <p class="text-uppercase text-muted fw-semibold small mb-0 ls-wide">Registered Donors</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="text-danger mb-3">
+                    <i class="bi bi-droplet-fill fs-1"></i>
+                </div>
+                <h2 class="display-5 fw-bold text-dark">@Model.TotalDonations</h2>
+                <p class="text-uppercase text-muted fw-semibold small mb-0 ls-wide">Total Donations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="text-success mb-3">
+                    <i class="bi bi-heart-pulse-fill fs-1"></i>
+                </div>
+                <h2 class="display-5 fw-bold text-dark">@Model.LivesSaved</h2>
+                <p class="text-uppercase text-muted fw-semibold small mb-0 ls-wide">Lives Impacted</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Why Donate Section -->
+<div class="row g-5 py-5 border-top">
+    <div class="col-12 text-center mb-4">
+        <h2 class="fw-bold display-5">Why Donate Blood?</h2>
+        <p class="text-muted lead">Discover the impact of your generosity</p>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="mb-4">
+            <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-hospital fs-2"></i>
+            </div>
+        </div>
+        <h4 class="fw-bold">Save Lives</h4>
+        <p class="text-muted px-lg-3">A single donation can save up to three lives. Your blood helps accident victims, surgery patients, and those fighting illness.</p>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="mb-4">
+            <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-activity fs-2"></i>
+            </div>
+        </div>
+        <h4 class="fw-bold">Health Benefits</h4>
+        <p class="text-muted px-lg-3">Regular blood donation is linked to improved cardiovascular health and can help maintain healthy iron levels.</p>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="mb-4">
+            <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-shield-heart fs-2"></i>
+            </div>
+        </div>
+        <h4 class="fw-bold">Feel Great</h4>
+        <p class="text-muted px-lg-3">Knowing that you've helped someone in need provides a sense of fulfillment and pride in your community.</p>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row py-5">
+    <div class="col-12">
+        <div class="bg-dark text-white p-5 rounded-5 shadow-lg text-center overflow-hidden position-relative">
+            <!-- Decorative circle -->
+            <div class="position-absolute top-0 end-0 p-5 opacity-10 bg-danger rounded-circle" style="width: 400px; height: 400px; transform: translate(30%, -30%);"></div>
+            
+            <div class="position-relative z-1">
+                <h2 class="display-5 fw-bold mb-3">Ready to make an impact?</h2>
+                <p class="lead mb-5 mx-auto opacity-75" style="max-width: 600px;">
+                    Registering as a donor takes less than 2 minutes. Your small act of kindness can give someone a second chance at life.
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a asp-controller="BloodDonor" asp-action="Create" class="btn btn-danger btn-lg px-5 py-3 fw-bold shadow-lg">Register as Donor</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ls-wide {
+        letter-spacing: 1px;
+    }
+    .rounded-5 {
+        border-radius: 2rem !important;
+    }
+    .opacity-10 {
+        opacity: 0.1 !important;
+    }
+</style>

@@ -15,7 +15,10 @@ namespace BloodDonorProject.Mapping
                 .ForMember(dest => dest.BloodGroup, opt => opt.MapFrom(src => src.BloodGroup.ToString()))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateHelper.CalculateAge(src.DateOfBirth)))
                 .ForMember(dest => dest.LastDonationDate, opt => opt.MapFrom(src => DateHelper.GetLastDonationDate(src.LastDonationDate)))
-                .ForMember(dest => dest.IsEligibleForDonation, opt => opt.MapFrom(src => BloodDonorService.IsEligible(src)));
+                .ForMember(dest => dest.IsEligibleForDonation, opt => opt.MapFrom(src => BloodDonorService.IsEligible(src)))
+                .ForMember(dest => dest.DonationHistory, opt => opt.MapFrom(src => src.Donations));
+
+            CreateMap<Donation, DonationHistoryViewModel>();
 
             CreateMap<BloodDonor, BloodDonorEditViewModel>()
                 .ForMember(dest => dest.ProfilePicture, opt => opt.Ignore())
