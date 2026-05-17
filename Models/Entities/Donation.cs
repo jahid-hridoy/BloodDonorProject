@@ -12,4 +12,5 @@ public class Donation
     [Required] 
     [ForeignKey("BloodDonor")]
     public int BloodDonorId { get; set; }
+    public virtual BloodDonor? BloodDonor { get; set; }
 }

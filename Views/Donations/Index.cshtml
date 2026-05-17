@@ -1,43 +1,115 @@
 @model IEnumerable<BloodDonorProject.Models.Donation>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Donation Records";
 }
 
-<h1>Index</h1>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="bi bi-heart-pulse-fill text-danger me-2"></i>Donation Records
+            </h1>
+            <p class="text-muted small mb-0">Manage and track blood donation history</p>
+        </div>
+        <a asp-action="Create" class="btn btn-danger shadow-sm px-4">
+            <i class="bi bi-plus-lg me-2"></i>Record New Donation
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>
-                @Html.DisplayNameFor(model => model.DonationDate)
-            </th>
-            <th>BloodDonorId</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DonationDate)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BloodDonorId)
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3 text-muted fw-bold text-uppercase small" style="width: 100px;">ID</th>
+                            <th class="py-3 text-muted fw-bold text-uppercase small">
+                                <i class="bi bi-calendar-event me-2"></i>@Html.DisplayNameFor(model => model.DonationDate)
+                            </th>
+                            <th class="py-3 text-muted fw-bold text-uppercase small">
+                                <i class="bi bi-person me-2"></i>Donor Name
+                            </th>
+                            <th class="py-3 text-muted fw-bold text-uppercase small text-center">
+                                <i class="bi bi-droplet me-2"></i>Blood Group
+                            </th>
+                            <th class="pe-4 py-3 text-muted fw-bold text-uppercase small text-center" style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#@item.Id</td>
+                                <td>
+                                    <span class="fw-semibold text-dark">
+                                        @item.DonationDate.ToString("MMM dd, yyyy")
+                                    </span>
+                                    <div class="text-muted small">@item.DonationDate.ToShortTimeString()</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.BloodDonor?.FullName</div>
+                                    <div class="text-muted small">ID: #@item.BloodDonorId</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-danger px-3 py-2 rounded-pill shadow-sm">
+                                        @item.BloodDonor?.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary px-3" title="Edit Record">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info px-3" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3" title="Delete Record">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 mt-4 bg-white rounded-3 shadow-sm">
+            <div class="display-1 text-light mb-4">
+                <i class="bi bi-clipboard-x"></i>
+            </div>
+            <h4 class="text-muted">No donation records found</h4>
+            <p class="text-muted small">Start by recording a new donation for a donor.</p>
+            <a asp-action="Create" class="btn btn-outline-danger mt-3">
+                <i class="bi bi-plus-lg me-1"></i>Add First Record
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .table thead th {
+        border-top: none;
+        letter-spacing: 0.5px;
+    }
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(220, 53, 69, 0.02);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    }
+    .btn-group .btn {
+        margin: 0 2px;
+        border-radius: 6px !important;
+    }
+    .badge {
+        font-weight: 500;
+    }
+</style>

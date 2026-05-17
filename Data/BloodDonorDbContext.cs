@@ -18,7 +18,8 @@ public class BloodDonorDbContext: IdentityDbContext<IdentityUser>
 
         modelBuilder.Entity<BloodDonor>()
             .HasMany(d => d.Donations)
-            .WithOne()
+            .WithOne(d => d.BloodDonor)
+            .HasForeignKey(d => d.BloodDonorId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BloodDonor>()

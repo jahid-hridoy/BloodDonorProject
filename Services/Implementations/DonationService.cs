@@ -18,11 +18,15 @@ namespace BloodDonorProject.Services.Implementations
 
         public async Task<IEnumerable<Donation>> GetAllDonationsAsync()
         {
-            return await _unitOfWork.donationRepository.GetAllAsync().ToListAsync();
+            return await _unitOfWork.donationRepository.GetAllAsync()
+                .Include(d => d.BloodDonor)
+                .ToListAsync();
         }
         public async Task<Donation?> GetDonationByIdAsync(int id)
         {
-            return await _unitOfWork.donationRepository.GetByIdAsync(id);
+            return await _unitOfWork.donationRepository.GetAllAsync()
+                .Include(d => d.BloodDonor)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
         public async Task CreateDonation(Donation donation)
         {
