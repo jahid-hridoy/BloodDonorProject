@@ -4,30 +4,49 @@
     ViewData["Title"] = "Delete Donor";
 }
 
-<h2>Delete Confirmation</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
 
-<div class="alert alert-danger">
-    Are you sure you want to delete <strong>@Model.FullName</strong>?
+            <div class="card shadow border-0">
+                <div class="card-header bg-danger text-white text-center py-3">
+                    <h4 class="mb-0">Delete Confirmation</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-danger text-center">
+                        Are you sure you want to permanently delete
+                        <strong>@Model.FullName</strong>?
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Blood Group:</strong><br /> @Model.BloodGroup</p>
+                            <p><strong>Contact:</strong><br /> @Model.ContactNumber</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong><br /> @Model.Email</p>
+                            <p><strong>Address:</strong><br /> @Model.Address</p>
+                        </div>
+                    </div>
+
+                    <form asp-action="DeleteConfirmed" method="post" class="d-flex justify-content-between">
+                        <input type="hidden" asp-for="Id" />
+
+                        <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-danger px-4">
+                            Yes, Delete
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
-
-<div>
-    <dl class="row">
-        <dt class="col-sm-3">Blood Group</dt>
-        <dd class="col-sm-9">@Model.BloodGroup</dd>
-
-        <dt class="col-sm-3">Contact</dt>
-        <dd class="col-sm-9">@Model.ContactNumber</dd>
-
-        <dt class="col-sm-3">Email</dt>
-        <dd class="col-sm-9">@Model.Email</dd>
-
-        <dt class="col-sm-3">Address</dt>
-        <dd class="col-sm-9">@Model.Address</dd>
-    </dl>
-</div>
-
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>

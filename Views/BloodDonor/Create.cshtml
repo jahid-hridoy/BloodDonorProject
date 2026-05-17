@@ -1,123 +1,89 @@
 @model BloodDonorCreateViewModel
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add New Donor";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
 
-<h4>BloodDonor</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post" id="donorForm" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactNumber" class="control-label"></label>
-                <input asp-for="ContactNumber" class="form-control" />
-                <span asp-validation-for="ContactNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date"/>
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BloodGroup" class="control-label"></label>
-                <select asp-for="BloodGroup" class="form-control"
-                        asp-items="ViewBag.BloodGroupList">
-                    <option value="">-- Select Blood Group --</option>
-                </select>
-                <span asp-validation-for="BloodGroup" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Weight" class="control-label"></label> 
-                <input asp-for="Weight" class="form-control" id="Weight" type="number" min="50" max="100" step="1"/>
-                <span asp-validation-for="Weight" class="text-danger"></span>
-                <span class="text-danger" id="weightError" style="display:none;"></span>
-            </div>
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-danger">➕ Add New Blood Donor</h2>
+        <p class="text-muted">Fill in donor information carefully</p>
+    </div>
 
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastDonationDate" class="control-label"></label>
-                <input asp-for="LastDonationDate" class="form-control" type="date"/>
-                <span asp-validation-for="LastDonationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProfilePicture" class="control-label">Profile Picture</label>
-                <input asp-for="ProfilePicture" class="form-control" type="file" accept="image/*"/>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card shadow border-0">
+        <div class="card-body p-4">
+
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="donorForm">
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="FullName" class="form-label fw-semibold"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ContactNumber" class="form-label fw-semibold"></label>
+                        <input asp-for="ContactNumber" class="form-control" />
+                        <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="BloodGroup" class="form-label fw-semibold"></label>
+                        <select asp-for="BloodGroup" asp-items="ViewBag.BloodGroupList" class="form-select">
+                            <option value="">Select Blood Group</option>
+                        </select>
+                        <span asp-validation-for="BloodGroup" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Weight" class="form-label fw-semibold"></label>
+                        <input asp-for="Weight" id="Weight" type="number" min="50" max="100" class="form-control" />
+                        <span class="text-danger" id="weightError" style="display:none;"></span>
+                        <span asp-validation-for="Weight" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Address" class="form-label fw-semibold"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="LastDonationDate" class="form-label fw-semibold"></label>
+                        <input asp-for="LastDonationDate" type="date" class="form-control" />
+                        <span asp-validation-for="LastDonationDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ProfilePicture" class="form-label fw-semibold"></label>
+                        <input asp-for="ProfilePicture" type="file" class="form-control" accept="image/*" />
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary">← Back</a>
+                    <button type="submit" class="btn btn-danger px-4">Save Donor</button>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const weightInput = document.getElementById('Weight');
-        const weightError = document.getElementById('weightError');
-        const form = document.getElementById('donorForm');
-
-        if (!weightInput || !form) {
-            console.warn("Weight input or form not found.");
-            return;
-        }
-
-        function validateWeight() {
-            const weightValue = weightInput.value.trim();
-
-            // Check if it's a valid number
-            if (!/^\d+(\.\d+)?$/.test(weightValue)) {
-                weightError.textContent = "Weight must be a valid number.";
-                weightError.style.display = 'block';
-                return false;
-            }
-
-            const weight = parseFloat(weightValue);
-
-            // Check if it's in the range 50–100
-            if (weight < 50 || weight > 100) {
-                weightError.textContent = "Weight must be between 50 and 100.";
-                weightError.style.display = 'block';
-                return false;
-            }
-
-            // Valid input
-            weightError.style.display = 'none';
-            return true;
-        }
-
-        weightInput.addEventListener('input', validateWeight);
-
-        form.addEventListener('submit', function (e) {
-            if (!validateWeight()) {
-                e.preventDefault();
-            }
-        });
-    });
-</script>
-
-
-
-
-

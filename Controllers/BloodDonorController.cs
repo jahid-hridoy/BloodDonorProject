@@ -18,6 +18,7 @@ public class BloodDonorController : Controller
     private readonly IFileService _fileService;
     private readonly IBloodDonorService _bloodDonorService;
     private readonly IMapper _mapper;
+    private readonly ILogger<BloodDonorController> _logger;
     private List<SelectListItem> GetBloodGroupSelectList()
     {
         return Enum.GetValues(typeof(BloodGroup))
@@ -32,12 +33,13 @@ public class BloodDonorController : Controller
             }).ToList();
     }
 
-    public BloodDonorController(BloodDonorDbContext context, IFileService fileService, IBloodDonorService bloodDonorService, IMapper mapper)
+    public BloodDonorController(BloodDonorDbContext context, IFileService fileService, IBloodDonorService bloodDonorService, IMapper mapper, ILogger<BloodDonorController> logger)
     {
         _context = context;
         _fileService = fileService;
         _bloodDonorService = bloodDonorService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [AllowAnonymous]
