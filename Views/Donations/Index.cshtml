@@ -23,8 +23,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4 py-3 text-muted fw-bold text-uppercase small" style="width: 100px;">ID</th>
-                            <th class="py-3 text-muted fw-bold text-uppercase small">
+                            <th class="ps-4 py-3 text-muted fw-bold text-uppercase small">
                                 <i class="bi bi-calendar-event me-2"></i>@Html.DisplayNameFor(model => model.DonationDate)
                             </th>
                             <th class="py-3 text-muted fw-bold text-uppercase small">
@@ -40,12 +39,10 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="ps-4 fw-bold text-muted">#@item.Id</td>
-                                <td>
+                                <td class="ps-4">
                                     <span class="fw-semibold text-dark">
                                         @item.DonationDate.ToString("MMM dd, yyyy")
                                     </span>
-                                    <div class="text-muted small">@item.DonationDate.ToShortTimeString()</div>
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">@item.BloodDonor?.FullName</div>

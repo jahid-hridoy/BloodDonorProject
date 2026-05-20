@@ -1,33 +1,193 @@
 @model Donation
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Donation";
 }
 
-<h1>Edit</h1>
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+    }
 
-<h4>Donation</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="BloodDonorId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DonationDate" class="control-label"></label>
-                <input asp-for="DonationDate" class="form-control" type="date" />
-                <span asp-validation-for="DonationDate" class="text-danger"></span>
+    .page-hero .hero-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1.25rem 1.75rem;
+    }
+
+    .form-card-body {
+        padding: 1.75rem;
+    }
+
+    .field-label {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 1.5px solid #dee2e6;
+        border-radius: 10px;
+        padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+    }
+
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon-wrap .bi {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    .readonly-field {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+        border: 1.5px solid #e9ecef;
+        font-size: 0.95rem;
+        color: #6c757d;
+        position: relative;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+        color: white;
+    }
+
+    .btn-back {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #6c757d;
+        background: #f8f9fa;
+        border: 1.5px solid #dee2e6;
+        transition: all 0.15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-back:hover {
+        background: #e9ecef;
+        color: #495057;
+        border-color: #adb5bd;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+
+        <!-- Hero Banner -->
+        <div class="page-hero">
+            <div class="hero-icon">
+                <i class="bi bi-pencil-square"></i>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <h4 class="mb-1" style="font-weight:700;">Edit Donation Record</h4>
+            <p class="mb-0 opacity-75 small">Update the donation date for this record.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <div class="form-card-header d-flex align-items-center gap-2">
+                <i class="bi bi-clipboard2-pulse text-primary"></i>
+                <span style="font-weight:600;">Donation Details</span>
             </div>
-        </form>
+
+            <div class="form-card-body">
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="BloodDonorId" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small rounded-3 mb-3" role="alert"></div>
+
+                    <!-- Donor (read-only display) -->
+                    <div class="mb-4">
+                        <div class="field-label">
+                            <i class="bi bi-person-heart text-primary me-1"></i>Donor
+                        </div>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-person"></i>
+                            <div class="readonly-field">@Model.BloodDonor?.FullName</div>
+                        </div>
+                    </div>
+
+                    <!-- Donation Date -->
+                    <div class="mb-4">
+                        <label asp-for="DonationDate" class="field-label">
+                            <i class="bi bi-calendar3 text-primary me-1"></i>Donation Date
+                        </label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-calendar-event"></i>
+                            <input asp-for="DonationDate" class="form-control" type="date" />
+                        </div>
+                        <span asp-validation-for="DonationDate" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-3 pt-2">
+                        <button type="submit" class="btn btn-save flex-fill">
+                            <i class="bi bi-floppy me-2"></i>Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn-back">
+                            <i class="bi bi-arrow-left"></i>Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

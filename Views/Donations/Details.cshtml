@@ -1,24 +1,231 @@
 @model BloodDonorProject.Models.Donation
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Donation Details";
 }
 
-<h1>Details</h1>
+<style>
+    .details-hero {
+        background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+    }
 
-<div>
-    <h4>Donation</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DonationDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DonationDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    .details-hero .hero-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .details-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .details-card-header {
+        background: #f0faf4;
+        border-bottom: 1px solid #d1e7dd;
+        padding: 1.25rem 1.75rem;
+    }
+
+    .details-card-body {
+        padding: 1.75rem;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.875rem 1rem;
+        border-radius: 10px;
+        background: #f8f9fa;
+        margin-bottom: 0.75rem;
+    }
+
+    .detail-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-row .detail-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .detail-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #adb5bd;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+        color: white;
+    }
+
+    .btn-delete-link {
+        background: #fff5f5;
+        border: 1.5px solid #f5c6cb;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #dc3545;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s;
+    }
+
+    .btn-delete-link:hover {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+    .btn-back {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #6c757d;
+        background: #f8f9fa;
+        border: 1.5px solid #dee2e6;
+        transition: all 0.15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-back:hover {
+        background: #e9ecef;
+        color: #495057;
+        border-color: #adb5bd;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+
+        <!-- Hero Banner -->
+        <div class="details-hero">
+            <div class="hero-icon">
+                <i class="bi bi-clipboard2-heart-fill"></i>
+            </div>
+            <h4 class="mb-1" style="font-weight:700;">Donation Details</h4>
+            <p class="mb-0 opacity-75 small">Full information for this donation record.</p>
+        </div>
+
+        <!-- Details Card -->
+        <div class="details-card">
+            <div class="details-card-header d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle-fill text-success"></i>
+                <span style="font-weight:600;">Record Information</span>
+            </div>
+
+            <div class="details-card-body">
+
+                <div class="mb-4">
+                    <div class="detail-row">
+                        <div class="detail-icon bg-success bg-opacity-10">
+                            <i class="bi bi-person-fill text-success"></i>
+                        </div>
+                        <div>
+                            <div class="detail-label">Donor Name</div>
+                            <div class="detail-value">@Model.BloodDonor?.FullName</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-icon bg-success bg-opacity-10">
+                            <i class="bi bi-calendar-event text-success"></i>
+                        </div>
+                        <div>
+                            <div class="detail-label">Donation Date</div>
+                            <div class="detail-value">@Model.DonationDate.ToString("MMMM dd, yyyy")</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-icon bg-success bg-opacity-10">
+                            <i class="bi bi-droplet-fill text-success"></i>
+                        </div>
+                        <div>
+                            <div class="detail-label">Blood Group</div>
+                            <div class="detail-value">
+                                <span class="badge bg-danger px-3 py-2 rounded-pill">
+                                    @Model.BloodDonor?.BloodGroup.ToString().Replace("_Positive", "+").Replace("_Negative", "-")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-icon bg-success bg-opacity-10">
+                            <i class="bi bi-geo-alt-fill text-success"></i>
+                        </div>
+                        <div>
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">@(Model.BloodDonor?.Address ?? "—")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-3 flex-wrap">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">
+                        <i class="bi bi-pencil"></i>Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-delete-link">
+                        <i class="bi bi-trash3"></i>Delete
+                    </a>
+                    <a asp-action="Index" class="btn-back ms-auto">
+                        <i class="bi bi-arrow-left"></i>Back
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
