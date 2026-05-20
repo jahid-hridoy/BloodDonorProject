@@ -1,49 +1,114 @@
-﻿@using Microsoft.AspNetCore.Identity
-
+@using Microsoft.AspNetCore.Identity
 @model List<IdentityRole>
 @{
     ViewData["Title"] = "Manage Roles";
 }
 
-<h2>Manage Roles</h2>
+<div class="page-header mb-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-shield-fill me-2 text-danger"></i>Manage Roles
+            </h2>
+            <p class="text-muted mb-0">Create and manage system access roles</p>
+        </div>
+        <span class="badge bg-danger-subtle text-danger fs-6 px-3 py-2 rounded-pill">
+            <i class="bi bi-shield me-1"></i>@Model.Count role@(Model.Count != 1 ? "s" : "")
+        </span>
+    </div>
+</div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+        <span>@TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["Error"]</div>
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+        <span>@TempData["Error"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<h4>Create New Role</h4>
-<form asp-action="CreateRole" method="post" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="roleName" class="form-control" placeholder="Enter role name" required />
-        <button type="submit" class="btn btn-primary">Create</button>
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 sticky-top" style="top: 80px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-plus-circle me-2 text-danger"></i>Create New Role
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="CreateRole" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-muted small text-uppercase">Role Name</label>
+                        <input type="text" name="roleName" class="form-control form-control-lg"
+                               placeholder="e.g. Admin, Donor, Staff" required autocomplete="off" />
+                        <div class="form-text">Role name must be unique and descriptive.</div>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold">
+                        <i class="bi bi-plus-lg me-2"></i>Create Role
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
-</form>
 
-<h4>Existing Roles</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Role Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var role in Model)
-        {
-            <tr>
-                <td>@role.Name</td>
-                <td>
-                    <form asp-action="DeleteRole" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this role?');">
-                        <input type="hidden" name="roleName" value="@role.Name" />
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-semibold">Existing Roles</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-shield display-4 text-muted"></i>
+                        <p class="text-muted mt-3 mb-0">No roles defined yet</p>
+                        <p class="text-muted small">Create your first role using the form.</p>
+                    </div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var role in Model)
+                        {
+                            <li class="list-group-item px-4 py-3 d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="role-icon bg-danger-subtle text-danger">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <span class="fw-semibold">@role.Name</span>
+                                </div>
+                                <form asp-action="DeleteRole" method="post"
+                                      onsubmit="return confirm('Delete role \'@role.Name\'? Users with this role will lose access.');">
+                                    <input type="hidden" name="roleName" value="@role.Name" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">
+                                        <i class="bi bi-trash3 me-1"></i>Delete
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .page-title { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; }
+    .role-icon {
+        width: 36px; height: 36px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; flex-shrink: 0;
+    }
+    .bg-danger-subtle { background-color: #fff0f0 !important; }
+    .list-group-item { transition: background-color 0.15s ease; }
+    .list-group-item:hover { background-color: #fafafa; }
+</style>

@@ -96,6 +96,29 @@ namespace BloodDonorProject.Controllers
             return RedirectToAction("Roles");
         }
 
+        // POST: Delete user by ID (JSON API)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest(new { success = false, message = "User ID is required." });
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound(new { success = false, message = "User not found." });
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && currentUser.Id == userId)
+                return BadRequest(new { success = false, message = "Cannot delete your own account." });
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return StatusCode(500, new { success = false, message = "Failed to delete user." });
+
+            return Ok(new { success = true, message = $"User '{user.Email}' deleted successfully." });
+        }
+
         // POST: Delete a role if not in use
         [HttpPost]
         [ValidateAntiForgeryToken]

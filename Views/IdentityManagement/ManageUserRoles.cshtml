@@ -1,20 +1,141 @@
-﻿@using BloodDonorProject.Models.ViewModel
+@using BloodDonorProject.Models.ViewModel
 @model ManageUserRolesViewModel
+@{
+    ViewData["Title"] = "Manage User Roles";
+}
 
-<h2>Manage Roles for @Model.Email</h2>
-
-<form asp-action="UpdateRoles" method="post">
-    <input type="hidden" name="userId" value="@Model.UserId" />
-
-    @foreach (var role in Model.AvailableRoles)
-    {
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="roles" value="@role"
-                   @(Model.UserRoles.Contains(role) ? "checked" : "") />
-            <label class="form-check-label">@role</label>
+<div class="page-header mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a asp-action="Users" class="btn btn-outline-secondary btn-sm px-3">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-person-gear me-2 text-danger"></i>Manage User Roles
+            </h2>
+            <p class="text-muted mb-0">Assign or remove roles for this user</p>
         </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-circle-lg bg-danger-subtle text-danger">
+                        @Model.Email.Substring(0, 1).ToUpper()
+                    </div>
+                    <div>
+                        <div class="fw-bold fs-5">@Model.Email</div>
+                        <div class="text-muted small">
+                            @{
+                                var currentRoles = Model.AvailableRoles.Where(r => Model.UserRoles.Contains(r)).ToList();
+                            }
+                            @if (currentRoles.Any())
+                            {
+                                @foreach (var r in currentRoles)
+                                {
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary me-1">@r</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="fst-italic">No roles currently assigned</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-shield-lock me-2 text-danger"></i>Available Roles
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="UpdateRoles" method="post">
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+
+                    @if (!Model.AvailableRoles.Any())
+                    {
+                        <div class="text-center py-3 text-muted">
+                            <i class="bi bi-shield display-5 d-block mb-2"></i>
+                            No roles available. Create roles first.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="role-list">
+                            @foreach (var role in Model.AvailableRoles)
+                            {
+                                var isChecked = Model.UserRoles.Contains(role);
+                                <label class="role-option @(isChecked ? "active" : "")" for="role_@role">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="role-icon bg-danger-subtle text-danger">
+                                            <i class="bi bi-shield-check"></i>
+                                        </div>
+                                        <span class="fw-medium">@role</span>
+                                    </div>
+                                    <input class="form-check-input role-checkbox" type="checkbox"
+                                           id="role_@role" name="roles" value="@role"
+                                           @(isChecked ? "checked" : "") />
+                                </label>
+                            }
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-danger flex-grow-1 py-2 fw-semibold">
+                            <i class="bi bi-check-lg me-2"></i>Update Roles
+                        </button>
+                        <a asp-action="Users" class="btn btn-outline-secondary px-4 py-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .page-title { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; }
+
+    .avatar-circle-lg {
+        width: 52px; height: 52px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1.2rem; flex-shrink: 0;
     }
 
-    <button type="submit" class="btn btn-success mt-3">Update Roles</button>
-    <a asp-action="Users" class="btn btn-secondary mt-3">Back</a>
-</form>
+    .bg-danger-subtle { background-color: #fff0f0 !important; }
+    .bg-primary-subtle { background-color: #eff6ff !important; }
+
+    .role-icon {
+        width: 34px; height: 34px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.95rem; flex-shrink: 0;
+    }
+
+    .role-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .role-option {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 16px; border-radius: 10px; border: 2px solid #e9ecef;
+        cursor: pointer; transition: all 0.15s ease; background: #fff;
+    }
+    .role-option:hover { border-color: #dc3545; background: #fff8f8; }
+    .role-option.active { border-color: #dc3545; background: #fff0f0; }
+
+    .role-checkbox { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+    .role-checkbox:checked { accent-color: #dc3545; }
+</style>
+
+<script>
+    document.querySelectorAll('.role-option').forEach(label => {
+        const checkbox = label.querySelector('.role-checkbox');
+        checkbox.addEventListener('change', () => {
+            label.classList.toggle('active', checkbox.checked);
+        });
+    });
+</script>
